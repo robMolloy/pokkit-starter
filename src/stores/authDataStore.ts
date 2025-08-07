@@ -10,45 +10,47 @@ const pocketbaseAuthStoreSchema = z.object({
 });
 type TAuth = z.infer<typeof pocketbaseAuthStoreSchema>;
 
-type TState = { status: "loading" | "loggedOut" } | { status: "loggedIn"; auth: TAuth };
+type TState = { authStatus: "loading" | "loggedOut" } | { authStatus: "loggedIn"; user: TAuth };
 
 export const useUnverifiedIsLoggedInStore = create<{
   data: TState;
   setData: (x: TState) => void;
 }>()((set) => ({
-  data: { status: "loading" },
+  data: { authStatus: "loading" },
   setData: (data) => set(() => ({ data })),
 }));
 
 export const useUnverifiedIsLoggedInSync = (p: { pb: PocketBase }) => {
   const isLoggedInStore = useUnverifiedIsLoggedInStore();
   useEffect(() => {
-    if (!p.pb.authStore.isValid) return isLoggedInStore.setData({ status: "loggedOut" });
+    if (!p.pb.authStore.isValid) return isLoggedInStore.setData({ authStatus: "loggedOut" });
 
     const resp = pocketbaseAuthStoreSchema.safeParse(p.pb.authStore);
     isLoggedInStore.setData(
-      resp.success ? { status: "loggedIn", auth: resp.data } : { status: "loggedOut" },
+      resp.success ? { authStatus: "loggedIn", user: resp.data } : { authStatus: "loggedOut" },
     );
   }, []);
 
   useEffect(() => {
     p.pb.authStore.onChange(() => {
-      if (!p.pb.authStore.isValid) return isLoggedInStore.setData({ status: "loggedOut" });
+      if (!p.pb.authStore.isValid) return isLoggedInStore.setData({ authStatus: "loggedOut" });
 
       const resp = pocketbaseAuthStoreSchema.safeParse(p.pb.authStore);
       isLoggedInStore.setData(
-        resp.success ? { status: "loggedIn", auth: resp.data } : { status: "loggedOut" },
+        resp.success ? { authStatus: "loggedIn", user: resp.data } : { authStatus: "loggedOut" },
       );
     });
   }, []);
 };
 
-type TCurrentUserState = { status: "loading" | "loggedOut" } | { status: "loggedIn"; user: TUser };
+type TCurrentUserState =
+  | { authStatus: "loading" | "loggedOut" }
+  | { authStatus: "loggedIn"; user: TUser };
 
 export const useCurrentUserStore = create<{
   data: TCurrentUserState;
   setData: (x: TCurrentUserState) => void;
 }>()((set) => ({
-  data: { status: "loading" },
+  data: { authStatus: "loading" },
   setData: (data) => set(() => ({ data })),
 }));

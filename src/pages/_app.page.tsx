@@ -30,30 +30,30 @@ const useAuth = (p: {
   useEffect(() => {
     // use anfn as return value is not cleanup
     (() => {
-      if (unverifiedIsLoggedInStore.data.status === "loggedOut")
-        return currentUserStore.setData({ status: "loggedOut" });
+      if (unverifiedIsLoggedInStore.data.authStatus === "loggedOut")
+        return currentUserStore.setData({ authStatus: "loggedOut" });
 
-      if (unverifiedIsLoggedInStore.data.status === "loading")
-        return currentUserStore.setData({ status: "loading" });
+      if (unverifiedIsLoggedInStore.data.authStatus === "loading")
+        return currentUserStore.setData({ authStatus: "loading" });
 
-      if (unverifiedIsLoggedInStore.data.status !== "loggedIn")
+      if (unverifiedIsLoggedInStore.data.authStatus !== "loggedIn")
         return console.error("should never be hit");
 
       return subscribeToUser({
         pb,
-        id: unverifiedIsLoggedInStore.data.auth.record.id,
+        id: unverifiedIsLoggedInStore.data.user.record.id,
         onChange: (user) => {
-          if (user) currentUserStore.setData({ status: "loggedIn", user });
-          else currentUserStore.setData({ status: "loggedOut" });
+          if (user) currentUserStore.setData({ authStatus: "loggedIn", user });
+          else currentUserStore.setData({ authStatus: "loggedOut" });
         },
       });
     })();
   }, [unverifiedIsLoggedInStore.data]);
 
   useEffect(() => {
-    if (currentUserStore.data.status === "loading") return p.onIsLoading();
-    if (currentUserStore.data.status === "loggedIn") return p.onIsLoggedIn();
-    if (currentUserStore.data.status === "loggedOut") return p.onIsLoggedOut();
+    if (currentUserStore.data.authStatus === "loading") return p.onIsLoading();
+    if (currentUserStore.data.authStatus === "loggedIn") return p.onIsLoggedIn();
+    if (currentUserStore.data.authStatus === "loggedOut") return p.onIsLoggedOut();
 
     console.error("should never be hit");
   }, [currentUserStore.data]);
@@ -83,14 +83,14 @@ export default function App({ Component, pageProps }: AppProps) {
       </Head>
       <Layout
         showLeftSidebar={
-          currentUserStore.data.status === "loggedIn" &&
-          ["approved", "admin"].includes(currentUserStore.data.user.role)
+          currentUserStore.data.authStatus === "loggedIn" &&
+          ["approved", "admin"].includes(currentUserStore.data.user.status)
         }
       >
         {(() => {
-          if (currentUserStore.data.status === "loading") return <LoadingScreen />;
+          if (currentUserStore.data.authStatus === "loading") return <LoadingScreen />;
 
-          if (currentUserStore.data.status === "loggedOut")
+          if (currentUserStore.data.authStatus === "loggedOut")
             return (
               <div className="mt-16 flex justify-center">
                 <AuthForm />
@@ -98,14 +98,14 @@ export default function App({ Component, pageProps }: AppProps) {
             );
 
           // should not be required
-          if (currentUserStore.data.status !== "loggedIn") {
+          if (currentUserStore.data.authStatus !== "loggedIn") {
             console.error(`this line should never be hit`);
             return;
           }
 
-          if (currentUserStore.data.user.role === "pending") return <div>awaiting approval</div>;
+          if (currentUserStore.data.user.status === "pending") return <div>awaiting approval</div>;
 
-          if (currentUserStore.data.user.role === "denied") return <div>blocked</div>;
+          if (currentUserStore.data.user.status === "denied") return <div>blocked</div>;
 
           return <Component {...pageProps} />;
         })()}

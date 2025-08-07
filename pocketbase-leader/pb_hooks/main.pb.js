@@ -6,7 +6,10 @@ onTerminate((e) => {
 
 onRecordCreate((e) => {
   const recordsCount = $app.countRecords("users");
-  if (recordsCount === 0) e.record.set("role", "admin");
+  if (recordsCount === 0) {
+    e.record.set("role", "admin");
+    e.record.set("status", "approved");
+  }
 
   e.next();
 }, "users");

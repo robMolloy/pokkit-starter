@@ -33,6 +33,7 @@ export function AuthSignup({ onSignUp }: AuthSignupProps) {
         name,
         email,
         status: "pending",
+        role: "standard",
         emailVisibility: true,
         password,
         passwordConfirm: password,

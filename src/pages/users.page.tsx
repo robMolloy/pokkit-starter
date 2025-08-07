@@ -25,10 +25,9 @@ import { CustomIcon } from "@/components/CustomIcon";
 import { MainLayout } from "@/components/layout/Layout";
 import { H1 } from "@/components/ui/defaultComponents";
 
-type TUserStatus = TUser["role"];
+type TUserStatus = TUser["status"];
 const statusColorClassMap: { [k in TUserStatus]: string } = {
   pending: "bg-muted",
-  admin: "bg-purple-600",
   approved: "bg-green-500",
   denied: "bg-destructive",
 } as const;
@@ -41,16 +40,15 @@ const UserStateSelect = (p: {
   return (
     <>
       <Select
-        value={p.user.role}
-        onValueChange={(status: TUserStatus) => p.onStatusChange({ ...p.user, role: status })}
+        value={p.user.status}
+        onValueChange={(status: TUserStatus) => p.onStatusChange({ ...p.user, status: status })}
         disabled={p.disabled}
       >
-        <SelectTrigger className={`w-[180px] ${statusColorClassMap[p.user.role]}`}>
+        <SelectTrigger className={`w-[180px] ${statusColorClassMap[p.user.status]}`}>
           <SelectValue placeholder="Select status" />
         </SelectTrigger>
         <SelectContent>
-          {p.user.role === "pending" && <SelectItem value="pending">Pending</SelectItem>}
-          <SelectItem value="admin">Admin</SelectItem>
+          {p.user.status === "pending" && <SelectItem value="pending">Pending</SelectItem>}
           <SelectItem value="approved">Approved</SelectItem>
           <SelectItem value="denied">Denied</SelectItem>
         </SelectContent>
@@ -80,7 +78,7 @@ const UsersPage = () => {
         <TableBody>
           {usersStore.data.map((user) => {
             const userOwnsRecord =
-              currentUserStore.data.status === "loggedIn" &&
+              currentUserStore.data.authStatus === "loggedIn" &&
               user.id === currentUserStore.data.user.id;
             return (
               <TableRow key={user.id} className={userOwnsRecord ? "bg-muted" : ""}>
@@ -94,8 +92,10 @@ const UsersPage = () => {
                       modalStore.setData(
                         <ConfirmationModalContent
                           title="Update status"
-                          description={`Are you sure you want to change the status of ${user.name} to ${user.role}?`}
-                          onConfirm={() => updateUserStatus({ pb, id: user.id, status: user.role })}
+                          description={`Are you sure you want to change the status of ${user.name} to ${user.status}?`}
+                          onConfirm={() =>
+                            updateUserStatus({ pb, id: user.id, status: user.status })
+                          }
                         />,
                       );
                     }}
