@@ -8,11 +8,15 @@
     "start": "next start",
     "tsc": "node_modules/.bin/tsc --noemit --watch",
     "lint": "next lint",
+    "kill-port": "kill -9 $(lsof -i:${PORT:?} -t | head -n 1)",
+    "kill:db": "PORT=8090 npm run kill-port",
     "db:start": "./pocketbase-leader/pocketbase serve",
-    "db:start:dev": "pocketbase-leader/start-pocketbase.js",
+    "db:create-backup": "pocketbase-leader/scripts/create-backup.mjs",
+    "db:replace-seed": "pocketbase-leader/scripts/replace-seed.mjs",
+    "db:restore-seed": "pocketbase-leader/scripts/restore-seed.mjs",
     "dev1": "npm run dev",
     "dev2": "npm run tsc",
-    "dev3": "npm run db:start:dev"
+    "dev3": "npm run db:start"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.40.1",
