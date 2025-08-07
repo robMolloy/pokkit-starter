@@ -17,7 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { pb } from "@/config/pocketbaseConfig";
-import { deleteUser, TUser, updateUserStatus } from "@/modules/users/dbUsersUtils";
+import { deleteUser, TUser, updateUserRole, updateUserStatus } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
 import { useCurrentUserStore } from "@/stores/authDataStore";
 import { useModalStore } from "@/stores/modalStore";
@@ -25,14 +25,13 @@ import { CustomIcon } from "@/components/CustomIcon";
 import { MainLayout } from "@/components/layout/Layout";
 import { H1 } from "@/components/ui/defaultComponents";
 
-type TUserStatus = TUser["status"];
-const statusColorClassMap: { [k in TUserStatus]: string } = {
+const statusColorClassMap: { [k in TUser["status"]]: string } = {
   pending: "bg-muted",
   approved: "bg-green-500",
   denied: "bg-destructive",
 } as const;
 
-const UserStateSelect = (p: {
+const UserStatusSelect = (p: {
   user: TUser;
   onStatusChange: (x: TUser) => void;
   disabled?: boolean;
@@ -41,16 +40,40 @@ const UserStateSelect = (p: {
     <>
       <Select
         value={p.user.status}
-        onValueChange={(status: TUserStatus) => p.onStatusChange({ ...p.user, status: status })}
+        onValueChange={(status: TUser["status"]) => p.onStatusChange({ ...p.user, status: status })}
         disabled={p.disabled}
       >
-        <SelectTrigger className={`w-[180px] ${statusColorClassMap[p.user.status]}`}>
+        <SelectTrigger className={`${statusColorClassMap[p.user.status]}`}>
           <SelectValue placeholder="Select status" />
         </SelectTrigger>
         <SelectContent>
           {p.user.status === "pending" && <SelectItem value="pending">Pending</SelectItem>}
           <SelectItem value="approved">Approved</SelectItem>
           <SelectItem value="denied">Denied</SelectItem>
+        </SelectContent>
+      </Select>
+    </>
+  );
+};
+
+const UserRoleSelect = (p: {
+  user: TUser;
+  onStatusChange: (x: TUser) => void;
+  disabled?: boolean;
+}) => {
+  return (
+    <>
+      <Select
+        value={p.user.role}
+        onValueChange={(role: TUser["role"]) => p.onStatusChange({ ...p.user, role })}
+        disabled={p.disabled}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="Select role" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="standard">Standard</SelectItem>
+          <SelectItem value="admin">Admin</SelectItem>
         </SelectContent>
       </Select>
     </>
@@ -72,6 +95,7 @@ const UsersPage = () => {
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Role</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeaderRow>
         </TableHeader>
@@ -85,7 +109,7 @@ const UsersPage = () => {
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
-                  <UserStateSelect
+                  <UserStatusSelect
                     user={user}
                     disabled={userOwnsRecord}
                     onStatusChange={async (user: TUser) => {
@@ -96,6 +120,21 @@ const UsersPage = () => {
                           onConfirm={() =>
                             updateUserStatus({ pb, id: user.id, status: user.status })
                           }
+                        />,
+                      );
+                    }}
+                  />
+                </TableCell>
+                <TableCell>
+                  <UserRoleSelect
+                    user={user}
+                    disabled={userOwnsRecord}
+                    onStatusChange={async (user: TUser) => {
+                      modalStore.setData(
+                        <ConfirmationModalContent
+                          title="Update role"
+                          description={`Are you sure you want to change the role of ${user.name} to ${user.role}?`}
+                          onConfirm={() => updateUserRole({ pb, id: user.id, role: user.role })}
                         />,
                       );
                     }}

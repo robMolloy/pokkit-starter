@@ -115,6 +115,15 @@ export const updateUserStatus = async (p: {
   }
 };
 
+export const updateUserRole = async (p: { pb: PocketBase; id: string; role: TUser["role"] }) => {
+  try {
+    const resp = await p.pb.collection("users").update(p.id, { role: p.role });
+    return { success: true, data: resp } as const;
+  } catch (error) {
+    return { success: false, error } as const;
+  }
+};
+
 export const deleteUser = async (p: { pb: PocketBase; id: string }) => {
   try {
     await p.pb.collection("users").delete(p.id);

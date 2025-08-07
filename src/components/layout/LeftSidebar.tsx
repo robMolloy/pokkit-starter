@@ -100,6 +100,7 @@ export function LeftSidebar() {
         <div className="border-t p-2">
           <div className="flex flex-col gap-1">
             {currentUserStore.data.authStatus === "loggedIn" &&
+              currentUserStore.data.user.status === "approved" &&
               currentUserStore.data.user.role === "admin" && (
                 <SidebarButton
                   href="/users"
