@@ -79,7 +79,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Pokkit Blog</title>
+        <title>pokkit Starter</title>
       </Head>
       <Layout
         showLeftSidebar={

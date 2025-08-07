@@ -8,7 +8,7 @@ export function Header() {
       <div className="flex h-14 flex-1 items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
           <CustomIcon iconName="Cloud" size="lg" />
-          <span className="font-bold">Pokkit Blog</span>
+          <span className="font-bold">pokkit Starter</span>
         </Link>
 
         <nav className="flex items-center space-x-2">
