@@ -3,6 +3,8 @@ import { pb } from "@/config/pocketbaseConfig";
 import { AuthForm } from "@/modules/auth/AuthForm";
 import { smartSubscribeToUsers, subscribeToUser } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
+import { AwaitingApprovalScreen } from "@/screens/AwaitingApprovalScreen";
+import { BlockedScreen } from "@/screens/BlockedScreen";
 import { LoadingScreen } from "@/screens/LoadingScreen";
 import {
   useCurrentUserStore,
@@ -103,9 +105,9 @@ export default function App({ Component, pageProps }: AppProps) {
             return;
           }
 
-          if (currentUserStore.data.user.status === "pending") return <div>awaiting approval</div>;
+          if (currentUserStore.data.user.status === "pending") return <AwaitingApprovalScreen />;
 
-          if (currentUserStore.data.user.status === "denied") return <div>blocked</div>;
+          if (currentUserStore.data.user.status === "blocked") return <BlockedScreen />;
 
           return <Component {...pageProps} />;
         })()}

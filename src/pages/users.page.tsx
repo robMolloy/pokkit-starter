@@ -28,7 +28,7 @@ import { H1 } from "@/components/ui/defaultComponents";
 const statusColorClassMap: { [k in TUser["status"]]: string } = {
   pending: "bg-muted",
   approved: "bg-green-500",
-  denied: "bg-destructive",
+  blocked: "bg-destructive",
 } as const;
 
 const UserStatusSelect = (p: {
@@ -49,7 +49,7 @@ const UserStatusSelect = (p: {
         <SelectContent>
           {p.user.status === "pending" && <SelectItem value="pending">Pending</SelectItem>}
           <SelectItem value="approved">Approved</SelectItem>
-          <SelectItem value="denied">Denied</SelectItem>
+          <SelectItem value="blocked">Blocked</SelectItem>
         </SelectContent>
       </Select>
     </>

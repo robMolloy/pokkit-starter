@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
+  Ban,
+  Clock,
   ChevronDown,
   ChevronRight,
   Folder,
@@ -39,11 +41,13 @@ import {
 } from "lucide-react";
 
 const iconMap = {
+  Ban,
+  Clock,
+  ChevronDown,
+  ChevronRight,
+  Folder,
   Plus,
   Star,
-  Folder,
-  ChevronRight,
-  ChevronDown,
   Calendar,
   Download,
   FileText,
