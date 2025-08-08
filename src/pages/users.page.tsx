@@ -32,40 +32,38 @@ const statusColorClassMap: { [k in TUser["status"]]: string } = {
 } as const;
 
 const UserStatusSelect = (p: {
-  user: TUser;
-  onStatusChange: (x: TUser) => void;
+  value: TUser["status"];
+  onStatusChange: (x: Pick<TUser, "status">) => void;
   disabled?: boolean;
 }) => {
   return (
-    <>
-      <Select
-        value={p.user.status}
-        onValueChange={(status: TUser["status"]) => p.onStatusChange({ ...p.user, status: status })}
-        disabled={p.disabled}
-      >
-        <SelectTrigger className={`${statusColorClassMap[p.user.status]}`}>
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent>
-          {p.user.status === "pending" && <SelectItem value="pending">Pending</SelectItem>}
-          <SelectItem value="approved">Approved</SelectItem>
-          <SelectItem value="blocked">Blocked</SelectItem>
-        </SelectContent>
-      </Select>
-    </>
+    <Select
+      value={p.value}
+      onValueChange={(status: TUser["status"]) => p.onStatusChange({ status })}
+      disabled={p.disabled}
+    >
+      <SelectTrigger className={`${statusColorClassMap[p.value]}`}>
+        <SelectValue placeholder="Select status" />
+      </SelectTrigger>
+      <SelectContent>
+        {p.value === "pending" && <SelectItem value="pending">Pending</SelectItem>}
+        <SelectItem value="approved">Approved</SelectItem>
+        <SelectItem value="blocked">Blocked</SelectItem>
+      </SelectContent>
+    </Select>
   );
 };
 
 const UserRoleSelect = (p: {
-  user: TUser;
-  onStatusChange: (x: TUser) => void;
+  value: TUser["role"];
+  onStatusChange: (x: Pick<TUser, "role">) => void;
   disabled?: boolean;
 }) => {
   return (
     <>
       <Select
-        value={p.user.role}
-        onValueChange={(role: TUser["role"]) => p.onStatusChange({ ...p.user, role })}
+        value={p.value}
+        onValueChange={(role: TUser["role"]) => p.onStatusChange({ role })}
         disabled={p.disabled}
       >
         <SelectTrigger>
@@ -110,16 +108,14 @@ const UsersPage = () => {
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                   <UserStatusSelect
-                    user={user}
+                    value={user.status}
                     disabled={userOwnsRecord}
-                    onStatusChange={async (user: TUser) => {
+                    onStatusChange={({ status }) => {
                       modalStore.setData(
                         <ConfirmationModalContent
                           title="Update status"
                           description={`Are you sure you want to change the status of ${user.name} to ${user.status}?`}
-                          onConfirm={() =>
-                            updateUserStatus({ pb, id: user.id, status: user.status })
-                          }
+                          onConfirm={() => updateUserStatus({ pb, id: user.id, status })}
                         />,
                       );
                     }}
@@ -127,14 +123,14 @@ const UsersPage = () => {
                 </TableCell>
                 <TableCell>
                   <UserRoleSelect
-                    user={user}
+                    value={user.role}
                     disabled={userOwnsRecord}
-                    onStatusChange={async (user: TUser) => {
+                    onStatusChange={({ role }) => {
                       modalStore.setData(
                         <ConfirmationModalContent
                           title="Update role"
                           description={`Are you sure you want to change the role of ${user.name} to ${user.role}?`}
-                          onConfirm={() => updateUserRole({ pb, id: user.id, role: user.role })}
+                          onConfirm={() => updateUserRole({ pb, id: user.id, role })}
                         />,
                       );
                     }}
