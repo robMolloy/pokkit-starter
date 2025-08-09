@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { pb } from "@/config/pocketbaseConfig";
 import { useState } from "react";
@@ -11,16 +11,15 @@ interface AuthSignupProps {
 export function AuthSignup({ onSignUp }: AuthSignupProps) {
   const [isLoading, setIsLoading] = useState(false);
 
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return;
     setIsLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("signup-email") as string;
-    const password = formData.get("signup-password") as string;
-    const confirmPassword = formData.get("confirm-password") as string;
 
     if (password !== confirmPassword) {
       onSignUp(false, "Passwords do not match");
@@ -52,35 +51,49 @@ export function AuthSignup({ onSignUp }: AuthSignupProps) {
   };
 
   return (
-    <form onSubmit={handleSignUp} className="space-y-4">
-      <div className="space-y-2">
+    <form onSubmit={handleSignUp} className="flex flex-col gap-4">
+      <div>
         <Label htmlFor="name">Full Name</Label>
-        <Input id="name" name="name" type="text" placeholder="Enter your full name" required />
+        <TextInput
+          id="name"
+          value={name}
+          onInput={setName}
+          name="name"
+          type="text"
+          placeholder="Enter your full name"
+          required
+        />
       </div>
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="signup-email">Email</Label>
-        <Input
+        <TextInput
           id="signup-email"
+          value={email}
+          onInput={setEmail}
           name="signup-email"
           type="email"
           placeholder="Enter your email"
           required
         />
       </div>
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="signup-password">Password</Label>
-        <Input
+        <TextInput
           id="signup-password"
+          value={password}
+          onInput={setPassword}
           name="signup-password"
           type="password"
           placeholder="Create a password"
           required
         />
       </div>
-      <div className="space-y-2">
+      <div>
         <Label htmlFor="confirm-password">Confirm Password</Label>
-        <Input
+        <TextInput
           id="confirm-password"
+          value={confirmPassword}
+          onInput={setConfirmPassword}
           name="confirm-password"
           type="password"
           placeholder="Confirm your password"
