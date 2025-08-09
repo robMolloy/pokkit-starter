@@ -34,14 +34,14 @@ export const TextInput = ({
 }) => {
   const [internalValue, setInternalValue] = React.useState(value);
 
-  React.useEffect(() => setInternalValue(value), [value]);
   React.useEffect(() => onInput(internalValue), [internalValue]);
+  React.useEffect(() => setInternalValue(value), [value]);
 
   return (
     <Input
       type={p.type ?? "text"}
       {...p}
-      value={value}
+      value={internalValue}
       onInput={(e) => {
         const newValue = (e.target as unknown as { value: string }).value;
         setInternalValue(newValue);
