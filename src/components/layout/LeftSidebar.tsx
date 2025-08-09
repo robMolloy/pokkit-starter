@@ -6,12 +6,15 @@ import { useCurrentUserStore } from "@/stores/authDataStore";
 import { Tooltip } from "@radix-ui/react-tooltip";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { ReactNode } from "react";
 import { CustomIcon } from "../CustomIcon";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 import { MainLayout } from "./Layout";
 
-const SidebarButtonWrapper = (p: { children: ReactNode; href?: string; disabled?: boolean }) => {
+const SidebarButtonWrapper = (p: {
+  children: React.ReactNode;
+  href?: string;
+  disabled?: boolean;
+}) => {
   return p.href ? (
     <Link href={p.disabled ? "#" : p.href} className={p.disabled ? "pointer-events-none" : ""}>
       {p.children}
@@ -21,7 +24,10 @@ const SidebarButtonWrapper = (p: { children: ReactNode; href?: string; disabled?
   );
 };
 
-const PossibleTooltipWrapper = (p: { children: ReactNode; tooltipContent?: React.ReactNode }) => {
+const PossibleTooltipWrapper = (p: {
+  children: React.ReactNode;
+  tooltipContent?: React.ReactNode;
+}) => {
   return p.tooltipContent ? (
     <TooltipProvider>
       <Tooltip>
@@ -37,7 +43,7 @@ const PossibleTooltipWrapper = (p: { children: ReactNode; tooltipContent?: React
 const SidebarButton = (p: {
   href?: string;
   iconName?: React.ComponentProps<typeof CustomIcon>["iconName"];
-  children: ReactNode;
+  children: React.ReactNode;
   isHighlighted: boolean;
   onClick?: () => void;
   badgeCount?: number;
@@ -83,6 +89,11 @@ export function LeftSidebar() {
   const usersStore = useUsersStore();
   const pendingUsersCount = usersStore.data.filter((user) => user.status === "pending").length;
 
+  const isAdmin =
+    currentUserStore.data.authStatus === "loggedIn" &&
+    currentUserStore.data.user.status === "approved" &&
+    currentUserStore.data.user.role === "admin";
+
   return (
     <MainLayout fillPageExactly padding={false}>
       <div className="flex h-full flex-col">
@@ -99,18 +110,16 @@ export function LeftSidebar() {
 
         <div className="border-t p-2">
           <div className="flex flex-col gap-1">
-            {currentUserStore.data.authStatus === "loggedIn" &&
-              currentUserStore.data.user.status === "approved" &&
-              currentUserStore.data.user.role === "admin" && (
-                <SidebarButton
-                  href="/users"
-                  iconName="Users"
-                  isHighlighted={router.pathname === "/users"}
-                  badgeCount={pendingUsersCount}
-                >
-                  Users
-                </SidebarButton>
-              )}
+            {isAdmin && (
+              <SidebarButton
+                href="/users"
+                iconName="Users"
+                isHighlighted={router.pathname === "/users"}
+                badgeCount={pendingUsersCount}
+              >
+                Users
+              </SidebarButton>
+            )}
             <SidebarButton iconName="LogOut" isHighlighted={false} onClick={() => logout({ pb })}>
               Log Out
             </SidebarButton>
