@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { CustomIcon } from "../CustomIcon";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { PreserveScroll } from "./Layout";
+import { PreserveScrollAbility } from "./Layout";
 
 const SidebarButtonWrapper = (p: {
   children: React.ReactNode;
@@ -88,11 +88,11 @@ const LeftSidebarTemplate = (p: {
   bottom: React.ReactNode;
 }) => {
   return (
-    <PreserveScroll className="border-r">
+    <PreserveScrollAbility className="border-r">
       <div className="flex flex-col gap-1 border-b p-2">{p.top}</div>
       <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">{p.middle}</div>
       <div className="flex flex-col gap-1 border-t p-2">{p.bottom}</div>
-    </PreserveScroll>
+    </PreserveScrollAbility>
   );
 };
 
@@ -111,9 +111,18 @@ export function LeftSidebar() {
   return (
     <LeftSidebarTemplate
       top={
-        <SidebarButton href="/" iconName={"Home"} isHighlighted={router.pathname === "/"}>
-          Home
-        </SidebarButton>
+        <>
+          <SidebarButton href="/" iconName="Home" isHighlighted={router.pathname === "/"}>
+            Home
+          </SidebarButton>
+          <SidebarButton
+            href="/scroll"
+            iconName="Ban"
+            isHighlighted={router.pathname === "/scroll"}
+          >
+            Scroll
+          </SidebarButton>
+        </>
       }
       middle={[...Array(100)].map((_, j) => (
         <SidebarButton iconName="Ban" key={j} isHighlighted={j === 2}>
