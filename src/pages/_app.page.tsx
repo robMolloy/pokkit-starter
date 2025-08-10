@@ -114,41 +114,4 @@ export default function App({ Component, pageProps }: AppProps) {
       </Layout>
     </>
   );
-
-  // return (
-  //   <>
-  //     <Head>
-  //       <title>pokkit Starter</title>
-  //     </Head>
-  //     <Layout
-  //       showLeftSidebar={
-  //         currentUserStore.data.authStatus === "loggedIn" &&
-  //         ["approved", "admin"].includes(currentUserStore.data.user.status)
-  //       }
-  //     >
-  //       {(() => {
-  //         if (currentUserStore.data.authStatus === "loading") return <LoadingScreen />;
-
-  //         if (currentUserStore.data.authStatus === "loggedOut")
-  //           return (
-  //             <div className="mt-16 flex justify-center">
-  //               <AuthForm />
-  //             </div>
-  //           );
-
-  //         // should not be required
-  //         if (currentUserStore.data.authStatus !== "loggedIn") {
-  //           console.error(`this line should never be hit`);
-  //           return;
-  //         }
-
-  //         if (currentUserStore.data.user.status === "pending") return <AwaitingApprovalScreen />;
-
-  //         if (currentUserStore.data.user.status === "blocked") return <BlockedScreen />;
-
-  //         return <Component {...pageProps} />;
-  //       })()}
-  //     </Layout>
-  //   </>
-  // );
 }
