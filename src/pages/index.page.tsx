@@ -9,6 +9,9 @@ export default function Home() {
       <p className="text-muted-foreground">
         This is your dashboard. Start adding your content here.
       </p>
+      {[...Array(100)].map((_, j) => (
+        <div key={j}>this is how we scroooooolll</div>
+      ))}
     </MainLayout>
   );
 }

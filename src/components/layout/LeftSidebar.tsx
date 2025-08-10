@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { CustomIcon } from "../CustomIcon";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
-import { MainLayout } from "./Layout";
+import { PreserveScroll } from "./Layout";
 
 const SidebarButtonWrapper = (p: {
   children: React.ReactNode;
@@ -82,6 +82,20 @@ const SidebarButton = (p: {
   );
 };
 
+const LeftSidebarTemplate = (p: {
+  top: React.ReactNode;
+  middle: React.ReactNode;
+  bottom: React.ReactNode;
+}) => {
+  return (
+    <PreserveScroll className="border-r">
+      <div className="flex flex-col gap-1 border-b p-2">{p.top}</div>
+      <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">{p.middle}</div>
+      <div className="flex flex-col gap-1 border-t p-2">{p.bottom}</div>
+    </PreserveScroll>
+  );
+};
+
 export function LeftSidebar() {
   const router = useRouter();
 
@@ -95,37 +109,34 @@ export function LeftSidebar() {
     currentUserStore.data.user.role === "admin";
 
   return (
-    <MainLayout fillPageExactly padding={false}>
-      <div className="flex h-full flex-col">
-        <div className="border-b p-2">
-          <div className="flex flex-col gap-1">
-            <SidebarButton href="/" iconName={"Home"} isHighlighted={router.pathname === "/"}>
-              Home
+    <LeftSidebarTemplate
+      top={
+        <SidebarButton href="/" iconName={"Home"} isHighlighted={router.pathname === "/"}>
+          Home
+        </SidebarButton>
+      }
+      middle={[...Array(100)].map((_, j) => (
+        <SidebarButton iconName="Ban" key={j} isHighlighted={j === 2}>
+          do summit {j}
+        </SidebarButton>
+      ))}
+      bottom={
+        <>
+          {isAdmin && (
+            <SidebarButton
+              href="/users"
+              iconName="Users"
+              isHighlighted={router.pathname === "/users"}
+              badgeCount={pendingUsersCount}
+            >
+              Users
             </SidebarButton>
-          </div>
-        </div>
-        <div className="relative flex-1">
-          <div className="absolute inset-0 flex flex-col gap-1 overflow-y-auto p-2"></div>
-        </div>
-
-        <div className="border-t p-2">
-          <div className="flex flex-col gap-1">
-            {isAdmin && (
-              <SidebarButton
-                href="/users"
-                iconName="Users"
-                isHighlighted={router.pathname === "/users"}
-                badgeCount={pendingUsersCount}
-              >
-                Users
-              </SidebarButton>
-            )}
-            <SidebarButton iconName="LogOut" isHighlighted={false} onClick={() => logout({ pb })}>
-              Log Out
-            </SidebarButton>
-          </div>
-        </div>
-      </div>
-    </MainLayout>
+          )}
+          <SidebarButton iconName="LogOut" isHighlighted={false} onClick={() => logout({ pb })}>
+            Log Out
+          </SidebarButton>
+        </>
+      }
+    />
   );
 }

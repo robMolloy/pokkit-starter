@@ -2,6 +2,11 @@ import { Header } from "./Header";
 import { LeftSidebar } from "./LeftSidebar";
 import { Modal } from "../Modal";
 
+export const PreserveScroll = (p: {
+  children: React.ReactNode;
+  className?: HTMLDivElement["className"];
+}) => <div className={`flex h-full flex-col ${p.className ?? ""}`}>{p.children}</div>;
+
 export const MainLayout = (p: {
   children: React.ReactNode;
   padding?: boolean;
@@ -15,19 +20,21 @@ export const MainLayout = (p: {
   );
 };
 
-export function Layout(p: { children: React.ReactNode; showLeftSidebar: boolean }) {
+export const Layout = (p: { children: React.ReactNode; showLeftSidebar: boolean }) => {
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="flex h-screen max-h-screen flex-col">
       <Header />
-      <div className="flex flex-1">
+
+      <div className="flex flex-1 overflow-hidden">
         {p.showLeftSidebar && (
-          <aside className="min-h-full w-96 overflow-y-auto border-r">
+          <PreserveScroll className="w-64">
             <LeftSidebar />
-          </aside>
+          </PreserveScroll>
         )}
-        <main className="min-h-full w-full overflow-y-auto">{p.children}</main>
+
+        <div className="flex-1 overflow-y-auto">{p.children}</div>
       </div>
       <Modal />
     </div>
   );
-}
+};
