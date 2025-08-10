@@ -10,7 +10,7 @@ export const PreserveScrollAbility = (p: {
 export const Scroll = (p: {
   children: React.ReactNode;
   className?: HTMLDivElement["className"];
-}) => <div className="flex flex-1 flex-col gap-1 overflow-y-auto p-2">{p.children}</div>;
+}) => <div className={`flex-1 overflow-y-auto ${p.className ?? ""}`}>{p.children}</div>;
 
 export const MainLayout = (p: {
   children: React.ReactNode;
