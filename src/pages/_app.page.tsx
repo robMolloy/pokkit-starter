@@ -16,7 +16,54 @@ import "@/styles/globals.css";
 import "@/styles/markdown.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
+
+const PreserveScroll = (p: {
+  children: React.ReactNode;
+  className?: HTMLDivElement["className"];
+}) => <div className={`flex h-full flex-col ${p.className ?? ""}`}>{p.children}</div>;
+
+const CustomLeftSidebar = (p: {
+  top: React.ReactNode;
+  middle: React.ReactNode;
+  bottom: React.ReactNode;
+}) => {
+  return (
+    <PreserveScroll className="border-r">
+      <div className="border-b p-4">{p.top}</div>
+      <div className="flex-1 overflow-y-auto p-4">{p.middle}</div>
+      <div className="border-t p-4">{p.bottom}</div>
+    </PreserveScroll>
+  );
+};
+
+const CustomLayout = () => {
+  return (
+    <div className="flex h-screen max-h-screen flex-col">
+      <header className="h-16 bg-blue-600 p-4 text-white">
+        <h1 className="text-2xl font-bold">Header Title</h1>
+      </header>
+
+      <div className="flex flex-1 overflow-hidden">
+        <PreserveScroll>
+          <CustomLeftSidebar
+            top={<h2 className="text-lg font-semibold">Fixed Title</h2>}
+            middle={[...Array(100)].map((_, j) => (
+              <div key={j}>{j}</div>
+            ))}
+            bottom={<h2 className="text-lg font-semibold">Fixed Bottom</h2>}
+          />
+        </PreserveScroll>
+
+        <div className="flex-1 overflow-y-auto">
+          {[...Array(100)].map((_, j) => (
+            <div key={j}>{j}</div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const useAuth = (p: {
   onIsLoading: () => void;
@@ -77,6 +124,8 @@ export default function App({ Component, pageProps }: AppProps) {
     },
     onIsLoggedOut: () => {},
   });
+
+  return <CustomLayout />;
 
   return (
     <>
