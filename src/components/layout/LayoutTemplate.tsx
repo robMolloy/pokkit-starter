@@ -1,6 +1,5 @@
-import { Header } from "./Header";
-import { LeftSidebar } from "./LeftSidebar";
 import { Modal } from "../Modal";
+import { Header } from "./Header";
 
 export const PreserveScrollAbility = (p: {
   children: React.ReactNode;
@@ -22,17 +21,13 @@ export const MainFixedLayout = (p: { children: React.ReactNode }) => {
   return <PreserveScrollAbility>{p.children}</PreserveScrollAbility>;
 };
 
-export const Layout = (p: { children: React.ReactNode; showLeftSidebar: boolean }) => {
+export const LayoutTemplate = (p: { children: React.ReactNode; LeftSidebar: React.ReactNode }) => {
   return (
     <div className="flex h-screen max-h-screen flex-col">
       <Header />
 
       <div className="flex flex-1 overflow-hidden">
-        {p.showLeftSidebar && (
-          <PreserveScrollAbility className="w-64">
-            <LeftSidebar />
-          </PreserveScrollAbility>
-        )}
+        {p.LeftSidebar}
 
         <PreserveScrollAbility className="flex-1 overflow-y-auto">
           {p.children}

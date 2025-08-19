@@ -1,4 +1,4 @@
-import { MainLayout } from "@/components/layout/Layout";
+import { MainLayout } from "@/components/layout/LayoutTemplate";
 import { H1 } from "@/components/ui/defaultComponents";
 
 export default function Home() {

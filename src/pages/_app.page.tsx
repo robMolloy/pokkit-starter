@@ -1,6 +1,7 @@
-import { Layout } from "@/components/layout/Layout";
+import { LayoutTemplate } from "@/components/layout/LayoutTemplate";
 import { pb } from "@/config/pocketbaseConfig";
 import { AuthForm } from "@/modules/auth/AuthForm";
+import { LeftSidebar } from "@/modules/Layout/LeftSidebar";
 import { smartSubscribeToUsers, subscribeToUser } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
 import { AwaitingApprovalScreen } from "@/screens/AwaitingApprovalScreen";
@@ -83,11 +84,8 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>pokkit Starter</title>
       </Head>
-      <Layout
-        showLeftSidebar={
-          currentUserStore.data.authStatus === "loggedIn" &&
-          ["approved", "admin"].includes(currentUserStore.data.user.status)
-        }
+      <LayoutTemplate
+        LeftSidebar={currentUserStore.data.authStatus === "loggedIn" && <LeftSidebar />}
       >
         {(() => {
           if (currentUserStore.data.authStatus === "loading") return <LoadingScreen />;
@@ -111,7 +109,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
           return <Component {...pageProps} />;
         })()}
-      </Layout>
+      </LayoutTemplate>
     </>
   );
 }
