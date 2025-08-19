@@ -1,69 +1,20 @@
 import { LayoutTemplate } from "@/components/layout/LayoutTemplate";
 import { pb } from "@/config/pocketbaseConfig";
 import { AuthForm } from "@/modules/auth/AuthForm";
+import { useInitAuth } from "@/modules/auth/useInitAuth";
 import { Header } from "@/modules/Layout/Header";
 import { LeftSidebar } from "@/modules/Layout/LeftSidebar";
-import { smartSubscribeToUsers, subscribeToUser } from "@/modules/users/dbUsersUtils";
+import { smartSubscribeToUsers } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
 import { AwaitingApprovalScreen } from "@/screens/AwaitingApprovalScreen";
 import { BlockedScreen } from "@/screens/BlockedScreen";
 import { LoadingScreen } from "@/screens/LoadingScreen";
-import {
-  useCurrentUserStore,
-  useUnverifiedIsLoggedInStore,
-  useUnverifiedIsLoggedInSync,
-} from "@/stores/authDataStore";
+import { useCurrentUserStore } from "@/stores/authDataStore";
 import { useThemeStore } from "@/stores/themeStore";
 import "@/styles/globals.css";
 import "@/styles/markdown.css";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { useEffect } from "react";
-
-const useAuth = (p: {
-  onIsLoading: () => void;
-  onIsLoggedIn: () => void;
-  onIsLoggedOut: () => void;
-}) => {
-  const unverifiedIsLoggedInStore = useUnverifiedIsLoggedInStore();
-
-  const currentUserStore = useCurrentUserStore();
-
-  useUnverifiedIsLoggedInSync({ pb });
-
-  useEffect(() => {
-    // use anfn as return value is not cleanup
-    (() => {
-      if (unverifiedIsLoggedInStore.data.authStatus === "loggedOut")
-        return currentUserStore.setData({ authStatus: "loggedOut" });
-
-      if (unverifiedIsLoggedInStore.data.authStatus === "loading")
-        return currentUserStore.setData({ authStatus: "loading" });
-
-      if (unverifiedIsLoggedInStore.data.authStatus !== "loggedIn")
-        return console.error("should never be hit");
-
-      return subscribeToUser({
-        pb,
-        id: unverifiedIsLoggedInStore.data.user.record.id,
-        onChange: (user) => {
-          if (user) currentUserStore.setData({ authStatus: "loggedIn", user });
-          else currentUserStore.setData({ authStatus: "loggedOut" });
-        },
-      });
-    })();
-  }, [unverifiedIsLoggedInStore.data]);
-
-  useEffect(() => {
-    if (currentUserStore.data.authStatus === "loading") return p.onIsLoading();
-    if (currentUserStore.data.authStatus === "loggedIn") return p.onIsLoggedIn();
-    if (currentUserStore.data.authStatus === "loggedOut") return p.onIsLoggedOut();
-
-    console.error("should never be hit");
-  }, [currentUserStore.data]);
-
-  return currentUserStore.data;
-};
 
 export default function App({ Component, pageProps }: AppProps) {
   const themeStore = useThemeStore();
@@ -72,7 +23,7 @@ export default function App({ Component, pageProps }: AppProps) {
 
   themeStore.useThemeStoreSideEffect();
 
-  useAuth({
+  useInitAuth({
     onIsLoading: () => {},
     onIsLoggedIn: () => {
       smartSubscribeToUsers({ pb, onChange: (x) => usersStore.setData(x) });
