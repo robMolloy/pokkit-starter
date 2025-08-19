@@ -1,5 +1,4 @@
 import { Modal } from "../Modal";
-import { Header } from "./Header";
 
 export const PreserveScrollAbility = (p: {
   children: React.ReactNode;
@@ -21,10 +20,14 @@ export const MainFixedLayout = (p: { children: React.ReactNode }) => {
   return <PreserveScrollAbility>{p.children}</PreserveScrollAbility>;
 };
 
-export const LayoutTemplate = (p: { children: React.ReactNode; LeftSidebar: React.ReactNode }) => {
+export const LayoutTemplate = (p: {
+  children: React.ReactNode;
+  Header: React.ReactNode;
+  LeftSidebar: React.ReactNode;
+}) => {
   return (
     <div className="flex h-screen max-h-screen flex-col">
-      <Header />
+      {p.Header}
 
       <div className="flex flex-1 overflow-hidden">
         {p.LeftSidebar}

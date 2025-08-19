@@ -1,6 +1,7 @@
 import { LayoutTemplate } from "@/components/layout/LayoutTemplate";
 import { pb } from "@/config/pocketbaseConfig";
 import { AuthForm } from "@/modules/auth/AuthForm";
+import { Header } from "@/modules/Layout/Header";
 import { LeftSidebar } from "@/modules/Layout/LeftSidebar";
 import { smartSubscribeToUsers, subscribeToUser } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
@@ -85,6 +86,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>pokkit Starter</title>
       </Head>
       <LayoutTemplate
+        Header={<Header />}
         LeftSidebar={currentUserStore.data.authStatus === "loggedIn" && <LeftSidebar />}
       >
         {(() => {
