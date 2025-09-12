@@ -4,11 +4,10 @@ import { Label } from "@/components/ui/label";
 import { pb } from "@/config/pocketbaseConfig";
 import { useState } from "react";
 
-interface AuthSignupProps {
-  onSignUp: (success: boolean, message: string) => void;
-}
-
-export function AuthSignup({ onSignUp }: AuthSignupProps) {
+export function AuthSignup(p: {
+  onSignUpSuccess: (message: string) => void;
+  onSignUpError: (message: string) => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState("");
@@ -22,7 +21,7 @@ export function AuthSignup({ onSignUp }: AuthSignupProps) {
     setIsLoading(true);
 
     if (password !== confirmPassword) {
-      onSignUp(false, "Passwords do not match");
+      p.onSignUpError("Passwords do not match");
       setIsLoading(false);
       return;
     }
@@ -40,11 +39,11 @@ export function AuthSignup({ onSignUp }: AuthSignupProps) {
 
       // After creating the user, log them in
       await pb.collection("users").authWithPassword(email, password);
-      onSignUp(true, "Account created successfully!");
+      p.onSignUpSuccess("Account created successfully!");
     } catch (e: unknown) {
       const error = e as { message: string };
       console.error("Sign up error:", error);
-      onSignUp(false, error.message ?? "Failed to create account. Please try again.");
+      p.onSignUpError(error.message ?? "Failed to create account. Please try again.");
     } finally {
       setIsLoading(false);
     }

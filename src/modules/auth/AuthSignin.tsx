@@ -4,11 +4,10 @@ import { Label } from "@/components/ui/label";
 import { pb } from "@/config/pocketbaseConfig";
 import { useState } from "react";
 
-interface AuthSigninProps {
-  onSignIn: (success: boolean, message: string) => void;
-}
-
-export function AuthSignin({ onSignIn }: AuthSigninProps) {
+export function AuthSignin(p: {
+  onSignInSuccess: (message: string) => void;
+  onSignInError: (message: string) => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -20,10 +19,10 @@ export function AuthSignin({ onSignIn }: AuthSigninProps) {
 
     try {
       await pb.collection("users").authWithPassword(email, password);
-      onSignIn(true, "Successfully signed in!");
+      p.onSignInSuccess("Successfully signed in!");
     } catch (err) {
       console.error("Sign in error:", err);
-      onSignIn(false, "Invalid email or password. Please try again.");
+      p.onSignInError("Invalid email or password. Please try again.");
     } finally {
       setIsLoading(false);
     }
