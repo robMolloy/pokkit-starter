@@ -1,15 +1,11 @@
 import { LayoutTemplate } from "@/components/layout/LayoutTemplate";
 import { pb } from "@/config/pocketbaseConfig";
-import { AuthForm } from "@/modules/auth/AuthForm";
+import { useCurrentUserStore } from "@/modules/auth/authDataStore";
 import { useInitAuth } from "@/modules/auth/useInitAuth";
 import { Header } from "@/modules/Layout/Header";
 import { LeftSidebar } from "@/modules/Layout/LeftSidebar";
 import { smartSubscribeToUsers } from "@/modules/users/dbUsersUtils";
 import { useUsersStore } from "@/modules/users/usersStore";
-import { AwaitingApprovalScreen } from "@/screens/AwaitingApprovalScreen";
-import { BlockedScreen } from "@/screens/BlockedScreen";
-import { LoadingScreen } from "@/screens/LoadingScreen";
-import { useCurrentUserStore } from "@/modules/auth/authDataStore";
 import { useThemeStore } from "@/stores/themeStore";
 import "@/styles/globals.css";
 import "@/styles/markdown.css";
@@ -40,28 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
         Header={<Header />}
         LeftSidebar={currentUserStore.data.authStatus === "loggedIn" && <LeftSidebar />}
       >
-        {(() => {
-          if (currentUserStore.data.authStatus === "loading") return <LoadingScreen />;
-
-          if (currentUserStore.data.authStatus === "loggedOut")
-            return (
-              <div className="mt-16 flex justify-center">
-                <AuthForm pb={pb} />
-              </div>
-            );
-
-          // should not be required
-          if (currentUserStore.data.authStatus !== "loggedIn") {
-            console.error(`this line should never be hit`);
-            return;
-          }
-
-          if (currentUserStore.data.user.status === "pending") return <AwaitingApprovalScreen />;
-
-          if (currentUserStore.data.user.status === "blocked") return <BlockedScreen />;
-
-          return <Component {...pageProps} />;
-        })()}
+        <Component {...pageProps} />
       </LayoutTemplate>
     </>
   );
