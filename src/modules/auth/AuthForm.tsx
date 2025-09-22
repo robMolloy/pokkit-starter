@@ -10,10 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { AuthSignin } from "./AuthSignin";
 import { AuthSignup } from "./AuthSignup";
+import { PocketBase } from "@/config/pocketbaseConfig";
 
-export function AuthForm() {
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+const classMap: Record<string, string> = {
+  error: "bg-destructive/20 text-destructive",
+  success: "bg-green-500/15 text-green-500",
+};
+
+export function AuthForm(p: { pb: PocketBase }) {
+  const [messages, setMessages] = useState<string[] | null>(null);
+  const [status, setStatus] = useState<"error" | "success" | "">("");
 
   return (
     <Card className="w-[400px]">
@@ -22,16 +28,20 @@ export function AuthForm() {
         <CardDescription>Sign in to your account or create a new one</CardDescription>
       </CardHeader>
       <CardContent>
-        {error && (
-          <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
-        {success && (
-          <div className="mb-4 rounded-md bg-green-500/15 p-3 text-sm text-green-500">
-            {success}
-          </div>
-        )}
+        {messages &&
+          (() => {
+            const [title, ...otherMessages] = messages;
+
+            return (
+              <div
+                className={`mb-4 rounded-md bg-muted/15 p-3 text-center text-sm ${classMap[status] ?? ""}`}
+              >
+                <div className="text-lg font-bold">{title}</div>
+                {otherMessages && otherMessages.map((message, i) => <div key={i}>{message}</div>)}
+              </div>
+            );
+          })()}
+
         <Tabs defaultValue="signin" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="signin">Sign In</TabsTrigger>
@@ -39,25 +49,27 @@ export function AuthForm() {
           </TabsList>
           <TabsContent value="signin">
             <AuthSignin
-              onSignInError={(message) => {
-                setError(message);
-                setSuccess(null);
+              pb={p.pb}
+              onSignInError={(messages) => {
+                setMessages(messages);
+                setStatus("error");
               }}
-              onSignInSuccess={(message) => {
-                setSuccess(message);
-                setError(null);
+              onSignInSuccess={(messages) => {
+                setMessages(messages);
+                setStatus("success");
               }}
             />
           </TabsContent>
           <TabsContent value="signup">
             <AuthSignup
-              onSignUpError={(message) => {
-                setError(message);
-                setSuccess(null);
+              pb={p.pb}
+              onSignUpError={(messages) => {
+                setMessages(messages);
+                setStatus("error");
               }}
-              onSignUpSuccess={(message) => {
-                setSuccess(message);
-                setError(null);
+              onSignUpSuccess={(messages) => {
+                setMessages(messages);
+                setStatus("success");
               }}
             />
           </TabsContent>

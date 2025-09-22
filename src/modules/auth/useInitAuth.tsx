@@ -4,7 +4,7 @@ import {
   useCurrentUserStore,
   useUnverifiedIsLoggedInStore,
   useUnverifiedIsLoggedInSync,
-} from "@/stores/authDataStore";
+} from "@/modules/auth/authDataStore";
 import { useEffect } from "react";
 
 export const useInitAuth = (p: {

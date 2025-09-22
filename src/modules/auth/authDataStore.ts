@@ -1,14 +1,8 @@
-import { TUser, userSchema } from "@/modules/users/dbUsersUtils";
+import { pocketbaseAuthStoreSchema, TAuth } from "@/modules/auth/dbAuthUtils";
+import { TUser } from "@/modules/users/dbUsersUtils";
 import PocketBase from "pocketbase";
 import { useEffect } from "react";
-import { z } from "zod";
 import { create } from "zustand";
-
-const pocketbaseAuthStoreSchema = z.object({
-  token: z.string(),
-  record: userSchema,
-});
-type TAuth = z.infer<typeof pocketbaseAuthStoreSchema>;
 
 type TState = { authStatus: "loading" | "loggedOut" } | { authStatus: "loggedIn"; user: TAuth };
 

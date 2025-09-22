@@ -1,52 +1,55 @@
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { pb } from "@/config/pocketbaseConfig";
+import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
+import { loginWithPassword, signUpWithPassword } from "./dbAuthUtils";
 
 export function AuthSignup(p: {
-  onSignUpSuccess: (message: string) => void;
-  onSignUpError: (message: string) => void;
+  pb: PocketBase;
+  onSignUpSuccess: (message: string[]) => void;
+  onSignUpError: (message: string[]) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isLoading) return;
     setIsLoading(true);
 
-    if (password !== confirmPassword) {
-      p.onSignUpError("Passwords do not match");
+    if (password !== passwordConfirm) {
+      p.onSignUpError(["Passwords do not match"]);
       setIsLoading(false);
       return;
     }
 
-    try {
-      await pb.collection("users").create({
-        name,
-        email,
-        status: "pending",
-        role: "standard",
-        emailVisibility: true,
-        password,
-        passwordConfirm: password,
+    const resp = await (async () => {
+      const signUpResp = await signUpWithPassword({
+        pb: p.pb,
+        data: {
+          name,
+          email,
+          status: "pending",
+          role: "standard",
+          emailVisibility: true,
+          password,
+          passwordConfirm,
+        },
       });
 
-      // After creating the user, log them in
-      await pb.collection("users").authWithPassword(email, password);
-      p.onSignUpSuccess("Account created successfully!");
-    } catch (e: unknown) {
-      const error = e as { message: string };
-      console.error("Sign up error:", error);
-      p.onSignUpError(error.message ?? "Failed to create account. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+      if (!signUpResp.success) return signUpResp;
+      return loginWithPassword({ pb: p.pb, data: { email, password } });
+    })();
+
+    const fn = resp.success ? p.onSignUpSuccess : p.onSignUpError;
+    fn(resp.messages);
+
+    setIsLoading(false);
   };
 
   return (
@@ -91,8 +94,8 @@ export function AuthSignup(p: {
         <Label htmlFor="confirm-password">Confirm Password</Label>
         <TextInput
           id="confirm-password"
-          value={confirmPassword}
-          onInput={setConfirmPassword}
+          value={passwordConfirm}
+          onInput={setPasswordConfirm}
           name="confirm-password"
           type="password"
           placeholder="Confirm your password"

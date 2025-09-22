@@ -1,41 +1,42 @@
 import { Button } from "@/components/ui/button";
 import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { pb } from "@/config/pocketbaseConfig";
+import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
+import { loginWithPassword } from "./dbAuthUtils";
 
 export function AuthSignin(p: {
-  onSignInSuccess: (message: string) => void;
-  onSignInError: (message: string) => void;
+  pb: PocketBase;
+  onSignInSuccess: (messages: string[]) => void;
+  onSignInError: (messages: string[]) => void;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (isLoading) return;
-    setIsLoading(true);
-
-    try {
-      await pb.collection("users").authWithPassword(email, password);
-      p.onSignInSuccess("Successfully signed in!");
-    } catch (err) {
-      console.error("Sign in error:", err);
-      p.onSignInError("Invalid email or password. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <form onSubmit={handleSignIn} className="flex flex-col gap-4">
+    <form
+      onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (isLoading) return;
+        setIsLoading(true);
+
+        await (async () => {
+          const resp = await loginWithPassword({ pb: p.pb, data: { email, password } });
+          const fn = resp.success ? p.onSignInSuccess : p.onSignInError;
+          fn(resp.messages);
+        })();
+
+        setIsLoading(false);
+      }}
+      className="flex flex-col gap-4"
+    >
       <div>
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="signin-email-input">Email</Label>
         <TextInput
+          id="signin-email-input"
           value={email}
           onInput={setEmail}
-          id="email"
           name="email"
           type="email"
           placeholder="Enter your email"
@@ -43,11 +44,11 @@ export function AuthSignin(p: {
         />
       </div>
       <div>
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="signin-password-input">Password</Label>
         <TextInput
+          id="signin-password-input"
           value={password}
           onInput={setPassword}
-          id="password"
           name="password"
           type="password"
           placeholder="Enter your password"

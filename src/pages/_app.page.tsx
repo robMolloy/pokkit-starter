@@ -9,7 +9,7 @@ import { useUsersStore } from "@/modules/users/usersStore";
 import { AwaitingApprovalScreen } from "@/screens/AwaitingApprovalScreen";
 import { BlockedScreen } from "@/screens/BlockedScreen";
 import { LoadingScreen } from "@/screens/LoadingScreen";
-import { useCurrentUserStore } from "@/stores/authDataStore";
+import { useCurrentUserStore } from "@/modules/auth/authDataStore";
 import { useThemeStore } from "@/stores/themeStore";
 import "@/styles/globals.css";
 import "@/styles/markdown.css";
@@ -46,7 +46,7 @@ export default function App({ Component, pageProps }: AppProps) {
           if (currentUserStore.data.authStatus === "loggedOut")
             return (
               <div className="mt-16 flex justify-center">
-                <AuthForm />
+                <AuthForm pb={pb} />
               </div>
             );
 
