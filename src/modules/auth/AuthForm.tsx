@@ -11,18 +11,20 @@ import { useState } from "react";
 import { AuthSignin } from "./AuthSignin";
 import { AuthSignup } from "./AuthSignup";
 import { PocketBase } from "@/config/pocketbaseConfig";
+import { useRouter } from "next/router";
 
 const classMap: Record<string, string> = {
   error: "bg-destructive/20 text-destructive",
   success: "bg-green-500/20 text-green-500",
 };
 
-export function AuthForm(p: { pb: PocketBase }) {
+export const AuthForm = (p: { pb: PocketBase }) => {
+  const router = useRouter();
   const [messages, setMessages] = useState<string[] | null>(null);
   const [status, setStatus] = useState<"error" | "success" | "init">("init");
 
   return (
-    <Card className="w-[400px]">
+    <Card>
       <CardHeader>
         <CardTitle>Welcome</CardTitle>
         <CardDescription>Sign in to your account or create a new one</CardDescription>
@@ -68,6 +70,7 @@ export function AuthForm(p: { pb: PocketBase }) {
               onSignUpSuccess={(messages) => {
                 setMessages(messages);
                 setStatus("success");
+                router.push("/");
               }}
             />
           </TabsContent>
@@ -80,4 +83,4 @@ export function AuthForm(p: { pb: PocketBase }) {
       </CardFooter>
     </Card>
   );
-}
+};
