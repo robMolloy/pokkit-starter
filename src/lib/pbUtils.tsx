@@ -9,14 +9,18 @@ const errorSchema = z.object({
     data: outerSchema.transform((outerObj) => {
       const messages: string[] = [];
 
+      const addMessagesIfValuesOfKeysHaveMessageKey = (obj: Record<string, unknown>) => {
+        Object.values(obj)
+          .map((innerObj) => {
+            const messageObjParsed = messageObjSchema.safeParse(innerObj);
+            return messageObjParsed.success ? messageObjParsed.data : null;
+          })
+          .filter((val) => !!val)
+          .forEach((messageObj) => messages.push(messageObj.message));
+      };
+
       // shallow objects
-      Object.values(outerObj)
-        .map((innerObj) => {
-          const messageObjParsed = messageObjSchema.safeParse(innerObj);
-          return messageObjParsed.success ? messageObjParsed.data : null;
-        })
-        .filter((val) => !!val)
-        .forEach((messageObj) => messages.push(messageObj.message));
+      addMessagesIfValuesOfKeysHaveMessageKey(outerObj);
 
       // deep objects
       Object.values(outerObj)
@@ -25,17 +29,7 @@ const errorSchema = z.object({
           return innerParsed.success ? innerParsed.data : null;
         })
         .filter((val) => !!val)
-        .map((innerObj) => {
-          return Object.values(innerObj)
-            .map((messageObj) => {
-              const messageObjParsed = messageObjSchema.safeParse(messageObj);
-              return messageObjParsed.success ? messageObjParsed.data : null;
-            })
-            .filter((val) => !!val);
-        })
-        .forEach((outerValue) => {
-          outerValue.forEach((messageObj) => messages.push(messageObj.message));
-        });
+        .forEach((innerObj) => addMessagesIfValuesOfKeysHaveMessageKey(innerObj));
 
       return { messages };
     }),
