@@ -1,35 +1,39 @@
 import { z } from "zod";
 
-const outerSchema = z.record(z.string(), z.unknown());
-const innerSchema = outerSchema;
+const findMessagesInObjectOfObjects = (p: {
+  obj: Record<string, unknown>;
+  onFoundMessage: (p: { message: string; key: string }) => void;
+}) => {
+  Object.entries(p.obj)
+    .map(([key, innerObj]) => ({ ...messageObjSchema.safeParse(innerObj), key }))
+    .filter((val) => val.success)
+    .map((val) => ({ message: val.data.message, key: val.key }))
+    .forEach((keyMessageObj) => p.onFoundMessage(keyMessageObj));
+};
+
+const objSchema = z.record(z.string(), z.unknown());
 const messageObjSchema = z.object({ message: z.string() });
 const errorSchema = z.object({
   message: z.string().optional(),
   response: z.object({
-    data: outerSchema.transform((outerObj) => {
+    data: objSchema.transform((outerObj) => {
       const messages: string[] = [];
 
-      const addMessagesIfValuesOfKeysHaveMessageKey = (obj: Record<string, unknown>) => {
-        Object.values(obj)
-          .map((innerObj) => {
-            const messageObjParsed = messageObjSchema.safeParse(innerObj);
-            return messageObjParsed.success ? messageObjParsed.data : null;
-          })
-          .filter((val) => !!val)
-          .forEach((messageObj) => messages.push(messageObj.message));
+      const pushMessagesFromObjectOfObjects = (obj: Record<string, unknown>) => {
+        findMessagesInObjectOfObjects({
+          obj,
+          onFoundMessage: (msgKeyObj) => messages.push(`${msgKeyObj.message} (${msgKeyObj.key})`),
+        });
       };
-
       // shallow objects
-      addMessagesIfValuesOfKeysHaveMessageKey(outerObj);
+      pushMessagesFromObjectOfObjects(outerObj);
 
       // deep objects
       Object.values(outerObj)
-        .map((innerObj) => {
-          const innerParsed = innerSchema.safeParse(innerObj);
-          return innerParsed.success ? innerParsed.data : null;
-        })
-        .filter((val) => !!val)
-        .forEach((innerObj) => addMessagesIfValuesOfKeysHaveMessageKey(innerObj));
+        .map((innerObj) => objSchema.safeParse(innerObj))
+        .filter((val) => val.success)
+        .map((val) => val.data)
+        .forEach((innerObj) => pushMessagesFromObjectOfObjects(innerObj));
 
       return { messages };
     }),
