@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useCurrentUserStore } from "./authDataStore";
+import { useCurrentUserStore } from "../authDataStore";
 import { useEffect } from "react";
 import { LoadingScreen } from "@/screens/LoadingScreen";
 
@@ -8,10 +8,10 @@ export const UnauthenticatedOnlyRoute = (p: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    if (!!currentUserStore.data) router.push("/");
+    if (currentUserStore.data.authStatus === "loggedIn") router.push("/");
   }, [currentUserStore.data]);
 
-  if (currentUserStore.data === undefined) return <LoadingScreen />;
+  if (currentUserStore.data.authStatus === "loading") return <LoadingScreen />;
 
   return p.children;
 };
