@@ -9,6 +9,16 @@ const errorSchema = z.object({
     data: outerSchema.transform((outerObj) => {
       const messages: string[] = [];
 
+      // shallow objects
+      Object.values(outerObj)
+        .map((innerObj) => {
+          const messageObjParsed = messageObjSchema.safeParse(innerObj);
+          return messageObjParsed.success ? messageObjParsed.data : null;
+        })
+        .filter((val) => !!val)
+        .forEach((messageObj) => messages.push(messageObj.message));
+
+      // deep objects
       Object.values(outerObj)
         .map((innerObj) => {
           const innerParsed = innerSchema.safeParse(innerObj);
@@ -24,9 +34,7 @@ const errorSchema = z.object({
             .filter((val) => !!val);
         })
         .forEach((outerValue) => {
-          outerValue.forEach((messageObj) => {
-            messages.push(messageObj.message);
-          });
+          outerValue.forEach((messageObj) => messages.push(messageObj.message));
         });
 
       return { messages };

@@ -14,12 +14,12 @@ import { PocketBase } from "@/config/pocketbaseConfig";
 
 const classMap: Record<string, string> = {
   error: "bg-destructive/20 text-destructive",
-  success: "bg-green-500/15 text-green-500",
+  success: "bg-green-500/20 text-green-500",
 };
 
 export function AuthForm(p: { pb: PocketBase }) {
   const [messages, setMessages] = useState<string[] | null>(null);
-  const [status, setStatus] = useState<"error" | "success" | "">("");
+  const [status, setStatus] = useState<"error" | "success" | "init">("init");
 
   return (
     <Card className="w-[400px]">
@@ -33,9 +33,7 @@ export function AuthForm(p: { pb: PocketBase }) {
             const [title, ...otherMessages] = messages;
 
             return (
-              <div
-                className={`mb-4 rounded-md bg-muted/15 p-3 text-center text-sm ${classMap[status] ?? ""}`}
-              >
+              <div className={`mb-4 rounded-md p-3 text-center text-sm ${classMap[status] ?? ""}`}>
                 <div className="text-lg font-bold">{title}</div>
                 {otherMessages && otherMessages.map((message, i) => <div key={i}>{message}</div>)}
               </div>
