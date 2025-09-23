@@ -6,13 +6,13 @@ export default function Page() {
   return (
     <ApprovedUserOnlyRoute>
       <MainFixedLayout>
-        <H1>Scrolling page with fixed items</H1>
+        <H1>Scrolling page with fixed header</H1>
         <Scroll>
           {[...Array(100)].map((_, j) => (
             <div key={j}>this is how we scroooooolll</div>
           ))}
         </Scroll>
-        <H1>Scrolling page with fixed items (footer)</H1>
+        <H1>Scrolling page with fixed footer</H1>
       </MainFixedLayout>
     </ApprovedUserOnlyRoute>
   );
