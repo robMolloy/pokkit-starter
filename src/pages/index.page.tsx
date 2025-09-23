@@ -1,10 +1,10 @@
 import { MainLayout } from "@/components/layout/LayoutTemplate";
 import { H1 } from "@/components/ui/defaultComponents";
-import { AuthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/AuthenticatedOnlyRoute";
+import { ApprovedUserOnlyRoute } from "@/modules/auth/routeProtectors/ApprovedUserOnlyRoute";
 
 export default function Home() {
   return (
-    <AuthenticatedOnlyRoute>
+    <ApprovedUserOnlyRoute>
       <MainLayout>
         <H1>Welcome to pokkit Starter</H1>
         <br />
@@ -15,6 +15,6 @@ export default function Home() {
           <div key={j}>this is how we scroooooolll</div>
         ))}
       </MainLayout>
-    </AuthenticatedOnlyRoute>
+    </ApprovedUserOnlyRoute>
   );
 }

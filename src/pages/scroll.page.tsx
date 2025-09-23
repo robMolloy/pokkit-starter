@@ -1,16 +1,19 @@
 import { MainFixedLayout, Scroll } from "@/components/layout/LayoutTemplate";
 import { H1 } from "@/components/ui/defaultComponents";
+import { ApprovedUserOnlyRoute } from "@/modules/auth/routeProtectors/ApprovedUserOnlyRoute";
 
 export default function Page() {
   return (
-    <MainFixedLayout>
-      <H1>Scrolling page with fixed items</H1>
-      <Scroll>
-        {[...Array(100)].map((_, j) => (
-          <div key={j}>this is how we scroooooolll</div>
-        ))}
-      </Scroll>
-      <H1>Scrolling page with fixed items (footer)</H1>
-    </MainFixedLayout>
+    <ApprovedUserOnlyRoute>
+      <MainFixedLayout>
+        <H1>Scrolling page with fixed items</H1>
+        <Scroll>
+          {[...Array(100)].map((_, j) => (
+            <div key={j}>this is how we scroooooolll</div>
+          ))}
+        </Scroll>
+        <H1>Scrolling page with fixed items (footer)</H1>
+      </MainFixedLayout>
+    </ApprovedUserOnlyRoute>
   );
 }
