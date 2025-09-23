@@ -36,6 +36,56 @@ export const loginWithPassword = async (p: { pb: PocketBase; data: TUserSignInSe
     return { success: false, error, messages } as const;
   }
 };
+export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
+  try {
+    const resp = await p.pb.collection("users").authWithOAuth2({
+      provider: "google",
+      createData: {
+        status: "pending",
+        role: "standard",
+      },
+    });
+
+    console.log(`dbAuthUtils.ts:${/*LL*/ 49}`, { resp });
+
+    return {
+      success: true,
+      messages: ["Successfully signup user with google oauth2"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = [
+      "Failed to sign up user with google oauth2",
+      ...(messagesResp ? messagesResp : []),
+    ];
+
+    return { success: false, error, messages } as const;
+  }
+};
+export const signinWithOAuth2Google = async (p: { pb: PocketBase }) => {
+  try {
+    const resp = await p.pb.collection("users").authWithOAuth2({
+      provider: "google",
+    });
+
+    console.log(`dbAuthUtils.ts:${/*LL*/ 49}`, { resp });
+
+    return {
+      success: true,
+      messages: ["Successfully signin user with google oauth2"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = [
+      "Failed to sign in user with google oauth2",
+      ...(messagesResp ? messagesResp : []),
+    ];
+
+    return { success: false, error, messages } as const;
+  }
+};
 
 export const signUpWithPassword = async (p: { pb: PocketBase; data: TUserSignUpSeed }) => {
   try {

@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,11 +8,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PocketBase } from "@/config/pocketbaseConfig";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { AuthSignin } from "./AuthSignin";
 import { AuthSignup } from "./AuthSignup";
-import { PocketBase } from "@/config/pocketbaseConfig";
-import { useRouter } from "next/router";
+import { signinWithOAuth2Google, signupWithOAuth2Google } from "./dbAuthUtils";
 
 const classMap: Record<string, string> = {
   error: "bg-destructive/20 text-destructive",
@@ -48,6 +50,21 @@ export const AuthForm = (p: { pb: PocketBase }) => {
             <TabsTrigger value="signup">Sign Up</TabsTrigger>
           </TabsList>
           <TabsContent value="signin">
+            <br />
+            <Button
+              className="w-full"
+              onClick={async () => {
+                const resp = await signinWithOAuth2Google({ pb: p.pb });
+
+                setStatus(resp.success ? "success" : "error");
+                setMessages(resp.messages);
+              }}
+            >
+              Sign in with Google
+            </Button>
+            <br />
+            <br />
+
             <AuthSignin
               pb={p.pb}
               onSignInError={(messages) => {
@@ -61,6 +78,21 @@ export const AuthForm = (p: { pb: PocketBase }) => {
             />
           </TabsContent>
           <TabsContent value="signup">
+            <br />
+            <Button
+              className="w-full"
+              onClick={async () => {
+                const resp = await signupWithOAuth2Google({ pb: p.pb });
+
+                setStatus(resp.success ? "success" : "error");
+                setMessages(resp.messages);
+              }}
+            >
+              Sign up with Google
+            </Button>
+            <br />
+            <br />
+
             <AuthSignup
               pb={p.pb}
               onSignUpError={(messages) => {
