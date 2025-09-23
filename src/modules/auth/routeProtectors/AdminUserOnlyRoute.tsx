@@ -1,14 +1,21 @@
-import { ErrorScreen404 } from "@/screens/Error404Screen";
+import { Error404Screen } from "@/screens/Error404Screen";
 import { useCurrentUserStore } from "../authDataStore";
+import { ApprovedUserOnlyRoute } from "./ApprovedUserOnlyRoute";
+import { useEffect } from "react";
 
-export const AdminUserOnlyRoute = (p: { children?: React.ReactNode }) => {
+export const AdminUserOnlyRoute = (p: { children: React.ReactNode; onNotAdmin?: () => void }) => {
   const currentUserStore = useCurrentUserStore();
 
-  if (
-    currentUserStore.data.authStatus === "loggedIn" &&
-    currentUserStore.data.user.role === "admin"
-  )
-    return p.children;
+  const isAdmin =
+    currentUserStore.data.authStatus === "loggedIn" && currentUserStore.data.user.role === "admin";
 
-  return <ErrorScreen404 />;
+  useEffect(() => {
+    if (currentUserStore.data.authStatus === "loading") return;
+
+    if (!isAdmin) return p.onNotAdmin?.();
+  }, [currentUserStore.data]);
+
+  if (isAdmin) return <ApprovedUserOnlyRoute>{p.children}</ApprovedUserOnlyRoute>;
+
+  return <Error404Screen />;
 };

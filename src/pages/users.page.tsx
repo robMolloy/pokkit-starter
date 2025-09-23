@@ -25,6 +25,7 @@ import { CustomIcon } from "@/components/CustomIcon";
 import { MainLayout } from "@/components/layout/LayoutTemplate";
 import { H1 } from "@/components/ui/defaultComponents";
 import { AdminUserOnlyRoute } from "@/modules/auth/routeProtectors/AdminUserOnlyRoute";
+import { useRouter } from "next/router";
 
 const statusColorClassMap: { [k in TUser["status"]]: string } = {
   pending: "bg-muted",
@@ -166,8 +167,9 @@ const UsersScreen = () => {
 };
 
 const UsersPage = () => {
+  const router = useRouter();
   return (
-    <AdminUserOnlyRoute>
+    <AdminUserOnlyRoute onNotAdmin={() => router.push("/")}>
       <UsersScreen />
     </AdminUserOnlyRoute>
   );
