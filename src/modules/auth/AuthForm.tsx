@@ -22,6 +22,7 @@ import {
 } from "./dbAuthUtils";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { FormFeedbackMessages } from "@/components/uiCustom/FormFeedbackMessages";
 
 const OtpAuthForm = (p: {
   pb: PocketBase;
@@ -100,15 +101,10 @@ const OtpAuthForm = (p: {
   );
 };
 
-const classMap: Record<string, string> = {
-  error: "bg-destructive/75",
-  success: "bg-green-500/50",
-};
-
 export const AuthForm = (p: { pb: PocketBase }) => {
   const router = useRouter();
   const [messages, setMessages] = useState<string[] | null>(null);
-  const [status, setStatus] = useState<"error" | "success" | "init">("init");
+  const [status, setStatus] = useState<"error" | "success">();
 
   const [scenario, setScenario] = useState<
     "init" | "signinWithOtp" | "signinWithEmailAndPassword" | "signupWithEmailAndPassword"
@@ -116,7 +112,7 @@ export const AuthForm = (p: { pb: PocketBase }) => {
 
   useEffect(() => {
     setMessages(null);
-    setStatus("init");
+    setStatus(undefined);
   }, [scenario]);
 
   const handleErrorMessages = (messages: string[]) => {
@@ -149,19 +145,7 @@ export const AuthForm = (p: { pb: PocketBase }) => {
         )}
       </CardHeader>
       <CardContent>
-        {messages &&
-          (() => {
-            const [title, ...otherMessages] = messages;
-
-            return (
-              <div
-                className={`mb-4 rounded-md p-3 text-center text-sm text-white ${classMap[status] ?? ""}`}
-              >
-                <div className="text-lg font-bold">{title}</div>
-                {otherMessages && otherMessages.map((message, i) => <div key={i}>{message}</div>)}
-              </div>
-            );
-          })()}
+        {messages && status && <FormFeedbackMessages messages={messages} status={status} />}
         {scenario === "init" && (
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
