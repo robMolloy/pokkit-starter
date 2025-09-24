@@ -23,23 +23,10 @@ export const SignInWithOtpForm = (p: { pb: PocketBase }) => {
       {formFeedback.messages && formFeedback.status && (
         <FormFeedbackMessages messages={formFeedback.messages} status={formFeedback.status} />
       )}
-      <div>
-        <Label htmlFor="signinWithOtp-email-input">Email</Label>
-        <TextInput
-          id="signinWithOtp-email-input"
-          value={email}
-          onInput={setEmail}
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          required
-        />
-      </div>
-      <Button
-        type="button"
-        className="w-full"
-        disabled={isLoading}
-        onClick={async () => {
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={async (e) => {
+          e.preventDefault();
           if (isLoading) return;
           setIsLoading(true);
 
@@ -52,37 +39,57 @@ export const SignInWithOtpForm = (p: { pb: PocketBase }) => {
           setIsLoading(false);
         }}
       >
-        Request {otpId && "new"} OTP
-      </Button>
-      <div>
-        <Label htmlFor="signinWithOtp-otp-input">OTP</Label>
-        <TextInput
-          id="signinWithOtp-otp-input"
-          value={otp}
-          onInput={setOtp}
-          name="otp"
-          placeholder="Enter your OTP"
-          required
-        />
-      </div>
-      <Button
-        type="button"
-        className="w-full"
-        disabled={isLoading || !otpId}
-        onClick={async () => {
-          if (isLoading) return;
-          setIsLoading(true);
+        <div>
+          <Label htmlFor="signinWithOtp-email-input">Email</Label>
+          <TextInput
+            id="signinWithOtp-email-input"
+            value={email}
+            onInput={setEmail}
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          Request {otpId && "new"} OTP
+        </Button>
+      </form>
 
-          const resp = await signinWithOtp({ pb, data: { otpId, otp } });
+      {otpId && (
+        <form
+          className="flex flex-col gap-4"
+          onClick={async (e) => {
+            e.preventDefault();
+            if (isLoading) return;
+            setIsLoading(true);
 
-          const fn = resp.success ? formFeedback.showSuccess : formFeedback.showError;
-          fn(resp.messages);
+            const resp = await signinWithOtp({ pb, data: { otpId, otp } });
 
-          setIsLoading(false);
-        }}
-      >
-        Submit OTP
-      </Button>
+            const fn = resp.success ? formFeedback.showSuccess : formFeedback.showError;
+            fn(resp.messages);
+
+            setIsLoading(false);
+          }}
+        >
+          <div>
+            <Label htmlFor="signinWithOtp-otp-input">OTP</Label>
+            <TextInput
+              id="signinWithOtp-otp-input"
+              value={otp}
+              onInput={setOtp}
+              name="otp"
+              placeholder="Enter your OTP"
+              disabled={isLoading || !otpId}
+              required
+              autoFocus
+            />
+          </div>
+          <Button type="submit" className="w-full" disabled={isLoading || !otpId}>
+            Submit OTP
+          </Button>
+        </form>
+      )}
     </div>
   );
 };
