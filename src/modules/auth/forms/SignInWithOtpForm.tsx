@@ -78,6 +78,7 @@ export const SignInWithOtpForm = (p: { pb: PocketBase }) => {
               id="signinWithOtp-otp-input"
               value={otp}
               onInput={setOtp}
+              onClick={(e) => e.stopPropagation()}
               name="otp"
               placeholder="Enter your OTP"
               disabled={isLoading || !otpId}
