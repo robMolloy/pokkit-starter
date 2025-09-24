@@ -1,3 +1,4 @@
+import { CenteredItemTemplate } from "@/components/layout/CenteredItemTemplate";
 import { pb } from "@/config/pocketbaseConfig";
 import { AuthForm } from "@/modules/auth/AuthForm";
 import { UnauthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/UnauthenticatedOnlyRoute";
@@ -5,11 +6,9 @@ import { UnauthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/Unauthe
 export default function Page() {
   return (
     <UnauthenticatedOnlyRoute>
-      <div className="mt-16 flex justify-center">
-        <div className="w-[400px]">
-          <AuthForm pb={pb} />
-        </div>
-      </div>
+      <CenteredItemTemplate>
+        <AuthForm pb={pb} />
+      </CenteredItemTemplate>
     </UnauthenticatedOnlyRoute>
   );
 }
