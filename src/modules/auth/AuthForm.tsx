@@ -11,7 +11,7 @@ import { TextInput } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pb, PocketBase } from "@/config/pocketbaseConfig";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SigninWithEmailAndPasswordForm } from "./forms/SigninWithEmailAndPasswordForm";
 import { SignupWithEmailAndPasswordForm } from "./forms/SignupWithEmailAndPasswordForm";
 import {
@@ -110,9 +110,24 @@ export const AuthForm = (p: { pb: PocketBase }) => {
   const [messages, setMessages] = useState<string[] | null>(null);
   const [status, setStatus] = useState<"error" | "success" | "init">("init");
 
-  const [scenario, setScenario] = useState<"init" | "signinWithOtp" | "signinWithEmailAndPassword">(
-    "init",
-  );
+  const [scenario, setScenario] = useState<
+    "init" | "signinWithOtp" | "signinWithEmailAndPassword" | "signupWithEmailAndPassword"
+  >("init");
+
+  useEffect(() => {
+    setMessages(null);
+    setStatus("init");
+  }, [scenario]);
+
+  const handleErrorMessages = (messages: string[]) => {
+    setMessages(messages);
+    setStatus("error");
+  };
+  const handleSuccessMessages = (messages: string[]) => {
+    setMessages(messages);
+    setStatus("success");
+    router.push("/");
+  };
 
   return (
     <Card>
@@ -153,83 +168,71 @@ export const AuthForm = (p: { pb: PocketBase }) => {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
-            <TabsContent value="signin" className="flex flex-col gap-4 pt-2">
-              <Button className="w-full" onClick={() => setScenario("signinWithOtp")}>
-                Sign in with OTP
-              </Button>
+            <TabsContent value="signin" className="pt-2">
+              <div className="flex flex-col gap-4">
+                <Button className="w-full" onClick={() => setScenario("signinWithOtp")}>
+                  Sign in with OTP
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={async () => {
+                    const resp = await signinWithOAuth2Google({ pb: p.pb });
 
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const resp = await signinWithOAuth2Google({ pb: p.pb });
-
-                  setStatus(resp.success ? "success" : "error");
-                  setMessages(resp.messages);
-                }}
-              >
-                Sign in with Google
-              </Button>
-
-              <Button className="w-full" onClick={() => setScenario("signinWithEmailAndPassword")}>
-                Sign in with email and password
-              </Button>
+                    setStatus(resp.success ? "success" : "error");
+                    setMessages(resp.messages);
+                  }}
+                >
+                  Sign in with Google
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={() => setScenario("signinWithEmailAndPassword")}
+                >
+                  Sign in with email and password
+                </Button>
+              </div>
             </TabsContent>
-            <TabsContent value="signup">
-              <br />
-              <Button
-                className="w-full"
-                onClick={async () => {
-                  const resp = await signupWithOAuth2Google({ pb: p.pb });
-
-                  setStatus(resp.success ? "success" : "error");
-                  setMessages(resp.messages);
-                }}
-              >
-                Sign up with Google
-              </Button>
-              <br />
-              <br />
-
-              <SignupWithEmailAndPasswordForm
-                pb={p.pb}
-                onSignUpError={(messages) => {
-                  setMessages(messages);
-                  setStatus("error");
-                }}
-                onSignUpSuccess={(messages) => {
-                  setMessages(messages);
-                  setStatus("success");
-                  router.push("/");
-                }}
-              />
+            <TabsContent value="signup" className="pt-2">
+              <div className="flex flex-col gap-4">
+                <Button
+                  className="w-full"
+                  onClick={async () => {
+                    const resp = await signupWithOAuth2Google({ pb: p.pb });
+                    const fn = resp.success ? handleSuccessMessages : handleErrorMessages;
+                    fn(resp.messages);
+                  }}
+                >
+                  Sign up with Google
+                </Button>
+                <Button
+                  className="w-full"
+                  onClick={() => setScenario("signupWithEmailAndPassword")}
+                >
+                  Sign up with email and password
+                </Button>
+              </div>
             </TabsContent>
           </Tabs>
         )}
         {scenario === "signinWithOtp" && (
           <OtpAuthForm
             pb={p.pb}
-            onSignInError={(messages) => {
-              setMessages(messages);
-              setStatus("error");
-            }}
-            onSignInSuccess={(messages) => {
-              setMessages(messages);
-              setStatus("success");
-            }}
+            onSignInError={(messages) => handleErrorMessages(messages)}
+            onSignInSuccess={(messages) => handleSuccessMessages(messages)}
           />
         )}
-
         {scenario === "signinWithEmailAndPassword" && (
           <SigninWithEmailAndPasswordForm
             pb={p.pb}
-            onSignInError={(messages) => {
-              setMessages(messages);
-              setStatus("error");
-            }}
-            onSignInSuccess={(messages) => {
-              setMessages(messages);
-              setStatus("success");
-            }}
+            onSignInError={(messages) => handleErrorMessages(messages)}
+            onSignInSuccess={(messages) => handleSuccessMessages(messages)}
+          />
+        )}
+        {scenario === "signupWithEmailAndPassword" && (
+          <SignupWithEmailAndPasswordForm
+            pb={p.pb}
+            onSignUpError={(messages) => handleErrorMessages(messages)}
+            onSignUpSuccess={(messages) => handleSuccessMessages(messages)}
           />
         )}
       </CardContent>
