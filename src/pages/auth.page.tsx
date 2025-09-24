@@ -1,13 +1,12 @@
 import { CenteredItemTemplate } from "@/components/layout/CenteredItemTemplate";
-import { pb } from "@/config/pocketbaseConfig";
-import { AuthForm } from "@/modules/auth/AuthForm";
+import { AuthNavigationForm } from "@/modules/auth/forms/AuthNavigationForm";
 import { UnauthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/UnauthenticatedOnlyRoute";
 
 export default function Page() {
   return (
     <UnauthenticatedOnlyRoute>
       <CenteredItemTemplate>
-        <AuthForm pb={pb} />
+        <AuthNavigationForm />
       </CenteredItemTemplate>
     </UnauthenticatedOnlyRoute>
   );
