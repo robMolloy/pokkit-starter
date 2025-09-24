@@ -36,6 +36,46 @@ export const loginWithPassword = async (p: { pb: PocketBase; data: TUserSignInSe
     return { success: false, error, messages } as const;
   }
 };
+export const requestSigninWithOtp = async (p: { pb: PocketBase; email: string }) => {
+  try {
+    const resp = await p.pb.collection("users").requestOTP(p.email);
+    const schema = z.object({ otpId: z.string() });
+
+    const data = schema.parse(resp);
+    return {
+      success: true,
+      data,
+      messages: ["Successfully requested OTP"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = ["Failed to request OTP for user", ...(messagesResp ? messagesResp : [])];
+
+    return { success: false, error, messages } as const;
+  }
+};
+
+export const signinWithOtp = async (p: {
+  pb: PocketBase;
+  data: { otpId: string; otp: string };
+}) => {
+  try {
+    const authData = await p.pb.collection("users").authWithOTP(p.data.otpId, p.data.otp);
+    console.log(`AuthForm.tsx:${/*LL*/ 184}`, { authData });
+
+    return {
+      success: true,
+      messages: ["Successfully signed in with OTP"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = ["Failed to sign in with OTP", ...(messagesResp ? messagesResp : [])];
+
+    return { success: false, error, messages } as const;
+  }
+};
 export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
     const resp = await p.pb.collection("users").authWithOAuth2({
