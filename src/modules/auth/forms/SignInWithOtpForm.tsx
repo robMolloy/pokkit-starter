@@ -4,20 +4,25 @@ import { Label } from "@/components/ui/label";
 import { pb, PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
 import { requestSigninWithOtp, signinWithOtp } from "../dbAuthUtils";
+import {
+  FormFeedbackMessages,
+  useFormFeedbackMessages,
+} from "@/components/uiCustom/FormFeedbackMessages";
 
-export const OtpAuthForm = (p: {
-  pb: PocketBase;
-  onSignInSuccess: (messages: string[]) => void;
-  onSignInError: (messages: string[]) => void;
-}) => {
+export const SignInWithOtpForm = (p: { pb: PocketBase }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpId, setOtpId] = useState("");
 
+  const formFeedback = useFormFeedbackMessages();
+
   return (
     <div className="flex flex-col gap-4">
+      {formFeedback.messages && formFeedback.status && (
+        <FormFeedbackMessages messages={formFeedback.messages} status={formFeedback.status} />
+      )}
       <div>
         <Label htmlFor="signinWithOtp-email-input">Email</Label>
         <TextInput
@@ -38,11 +43,11 @@ export const OtpAuthForm = (p: {
           if (isLoading) return;
           setIsLoading(true);
 
-          const resp = await requestSigninWithOtp({ pb, email });
-          console.log(`AuthForm.tsx:${/*LL*/ 55}`, { resp });
+          const resp = await requestSigninWithOtp({ pb: p.pb, email });
 
           setOtpId(resp.success ? resp.data.otpId : "");
-          if (!resp.success) p.onSignInError(resp.messages);
+          if (resp.success) formFeedback.clear();
+          if (!resp.success) formFeedback.showError(resp.messages);
 
           setIsLoading(false);
         }}
@@ -70,7 +75,7 @@ export const OtpAuthForm = (p: {
 
           const resp = await signinWithOtp({ pb, data: { otpId, otp } });
 
-          const fn = resp.success ? p.onSignInSuccess : p.onSignInError;
+          const fn = resp.success ? formFeedback.showSuccess : formFeedback.showError;
           fn(resp.messages);
 
           setIsLoading(false);
