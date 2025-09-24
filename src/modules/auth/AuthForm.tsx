@@ -7,99 +7,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { TextInput } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { pb, PocketBase } from "@/config/pocketbaseConfig";
+import { FormFeedbackMessages } from "@/components/uiCustom/FormFeedbackMessages";
+import { PocketBase } from "@/config/pocketbaseConfig";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { signinWithOAuth2Google, signupWithOAuth2Google } from "./dbAuthUtils";
 import { SigninWithEmailAndPasswordForm } from "./forms/SigninWithEmailAndPasswordForm";
 import { SignupWithEmailAndPasswordForm } from "./forms/SignupWithEmailAndPasswordForm";
-import {
-  requestSigninWithOtp,
-  signinWithOAuth2Google,
-  signinWithOtp,
-  signupWithOAuth2Google,
-} from "./dbAuthUtils";
-import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { FormFeedbackMessages } from "@/components/uiCustom/FormFeedbackMessages";
-
-const OtpAuthForm = (p: {
-  pb: PocketBase;
-  onSignInSuccess: (messages: string[]) => void;
-  onSignInError: (messages: string[]) => void;
-}) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpId, setOtpId] = useState("");
-
-  return (
-    <div className="flex flex-col gap-4">
-      <div>
-        <Label htmlFor="signinWithOtp-email-input">Email</Label>
-        <TextInput
-          id="signinWithOtp-email-input"
-          value={email}
-          onInput={setEmail}
-          name="email"
-          type="email"
-          placeholder="Enter your email"
-          required
-        />
-      </div>
-      <Button
-        type="button"
-        className="w-full"
-        disabled={isLoading}
-        onClick={async () => {
-          if (isLoading) return;
-          setIsLoading(true);
-
-          const resp = await requestSigninWithOtp({ pb, email });
-          console.log(`AuthForm.tsx:${/*LL*/ 55}`, { resp });
-
-          setOtpId(resp.success ? resp.data.otpId : "");
-          if (!resp.success) p.onSignInError(resp.messages);
-
-          setIsLoading(false);
-        }}
-      >
-        Request {otpId && "new"} OTP
-      </Button>
-      <div>
-        <Label htmlFor="signinWithOtp-otp-input">OTP</Label>
-        <TextInput
-          id="signinWithOtp-otp-input"
-          value={otp}
-          onInput={setOtp}
-          name="otp"
-          placeholder="Enter your OTP"
-          required
-        />
-      </div>
-      <Button
-        type="button"
-        className="w-full"
-        disabled={isLoading || !otpId}
-        onClick={async () => {
-          if (isLoading) return;
-          setIsLoading(true);
-
-          const resp = await signinWithOtp({ pb, data: { otpId, otp } });
-
-          const fn = resp.success ? p.onSignInSuccess : p.onSignInError;
-          fn(resp.messages);
-
-          setIsLoading(false);
-        }}
-      >
-        Submit OTP
-      </Button>
-    </div>
-  );
-};
+import { OtpAuthForm } from "./forms/OtpAuthForm";
 
 export const AuthForm = (p: { pb: PocketBase }) => {
   const router = useRouter();
