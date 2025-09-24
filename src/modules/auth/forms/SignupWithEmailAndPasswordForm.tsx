@@ -3,13 +3,13 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { loginWithPassword, signUpWithPassword } from "./dbAuthUtils";
+import { loginWithPassword, signUpWithPassword } from "../dbAuthUtils";
 
-export function AuthSignup(p: {
+export const SignupWithEmailAndPasswordForm = (p: {
   pb: PocketBase;
   onSignUpSuccess: (message: string[]) => void;
   onSignUpError: (message: string[]) => void;
-}) {
+}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [name, setName] = useState("");
@@ -107,4 +107,4 @@ export function AuthSignup(p: {
       </Button>
     </form>
   );
-}
+};

@@ -12,8 +12,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pb, PocketBase } from "@/config/pocketbaseConfig";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { AuthSignin } from "./AuthSignin";
-import { AuthSignup } from "./AuthSignup";
+import { SigninWithEmailAndPasswordForm } from "./forms/SigninWithEmailAndPasswordForm";
+import { SignupWithEmailAndPasswordForm } from "./forms/SignupWithEmailAndPasswordForm";
 import {
   requestSigninWithOtp,
   signinWithOAuth2Google,
@@ -190,7 +190,7 @@ export const AuthForm = (p: { pb: PocketBase }) => {
               <br />
               <br />
 
-              <AuthSignup
+              <SignupWithEmailAndPasswordForm
                 pb={p.pb}
                 onSignUpError={(messages) => {
                   setMessages(messages);
@@ -220,7 +220,7 @@ export const AuthForm = (p: { pb: PocketBase }) => {
         )}
 
         {scenario === "signinWithEmailAndPassword" && (
-          <AuthSignin
+          <SigninWithEmailAndPasswordForm
             pb={p.pb}
             onSignInError={(messages) => {
               setMessages(messages);

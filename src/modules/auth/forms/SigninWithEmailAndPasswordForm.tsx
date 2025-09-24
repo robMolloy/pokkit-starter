@@ -3,29 +3,27 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { loginWithPassword } from "./dbAuthUtils";
+import { loginWithPassword } from "../dbAuthUtils";
 
-export function AuthSignin(p: {
+export const SigninWithEmailAndPasswordForm = (p: {
   pb: PocketBase;
   onSignInSuccess: (messages: string[]) => void;
   onSignInError: (messages: string[]) => void;
-}) {
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   return (
     <form
-      onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+      onSubmit={async (e) => {
         e.preventDefault();
         if (isLoading) return;
         setIsLoading(true);
 
-        await (async () => {
-          const resp = await loginWithPassword({ pb: p.pb, data: { email, password } });
-          const fn = resp.success ? p.onSignInSuccess : p.onSignInError;
-          fn(resp.messages);
-        })();
+        const resp = await loginWithPassword({ pb: p.pb, data: { email, password } });
+        const fn = resp.success ? p.onSignInSuccess : p.onSignInError;
+        fn(resp.messages);
 
         setIsLoading(false);
       }}
@@ -60,4 +58,4 @@ export function AuthSignin(p: {
       </Button>
     </form>
   );
-}
+};
