@@ -30,7 +30,7 @@ export const AuthNavigationForm = () => {
               className="w-full"
               onClick={async () => router.push("/auth/signin-with-oauth2")}
             >
-              Sign in with Google
+              Sign in with oAuth2
             </Button>
             <Button
               className="w-full"
@@ -92,17 +92,7 @@ export const AuthNavigationForm = () => {
   //               <Button className="w-full" onClick={() => setScenario("signinWithOtp")}>
   //                 Sign in with OTP
   //               </Button>
-  //               <Button
-  //                 className="w-full"
-  //                 onClick={async () => {
-  //                   const resp = await signinWithOAuth2Google({ pb: p.pb });
-
-  //                   setStatus(resp.success ? "success" : "error");
-  //                   setMessages(resp.messages);
-  //                 }}
-  //               >
-  //                 Sign in with Google
-  //               </Button>
+  //
   //               <Button
   //                 className="w-full"
   //                 onClick={() => setScenario("signinWithEmailAndPassword")}
