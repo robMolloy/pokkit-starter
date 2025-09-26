@@ -3,7 +3,7 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { loginWithPassword, signUpWithPassword } from "../dbAuthUtils";
+import { signinWithPassword, signUpWithPassword } from "../dbAuthUtils";
 
 export const SignupWithEmailAndPasswordForm = (p: {
   pb: PocketBase;
@@ -43,7 +43,7 @@ export const SignupWithEmailAndPasswordForm = (p: {
       });
 
       if (!signUpResp.success) return signUpResp;
-      return loginWithPassword({ pb: p.pb, data: { email, password } });
+      return signinWithPassword({ pb: p.pb, data: { email, password } });
     })();
 
     const fn = resp.success ? p.onSignUpSuccess : p.onSignUpError;

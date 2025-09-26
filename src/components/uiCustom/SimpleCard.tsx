@@ -10,17 +10,19 @@ import {
 export const SimpleCard = (p: {
   title?: string;
   description?: string;
-  headerChildren?: React.ReactNode;
+  headerChildrenTop?: React.ReactNode;
+  headerChildrenBottom?: React.ReactNode;
   footerChildren?: React.ReactNode;
   children: React.ReactNode;
 }) => {
   return (
     <Card>
-      {(p.title || p.description || p.headerChildren) && (
+      {(p.title || p.description || p.headerChildrenBottom || p.headerChildrenTop) && (
         <CardHeader>
+          {p.headerChildrenTop}
           {p.title && <CardTitle>{p.title}</CardTitle>}
           {p.description && <CardDescription>{p.description}</CardDescription>}
-          {p.headerChildren}
+          {p.headerChildrenBottom}
         </CardHeader>
       )}
       <CardContent>{p.children}</CardContent>

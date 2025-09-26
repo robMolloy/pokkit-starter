@@ -23,7 +23,7 @@ export const checkAuth = (p: { pb: PocketBase }) => {
   return { success: true, data: authStore } as const;
 };
 
-export const loginWithPassword = async (p: { pb: PocketBase; data: TUserSignInSeed }) => {
+export const signinWithPassword = async (p: { pb: PocketBase; data: TUserSignInSeed }) => {
   try {
     const resp = await p.pb
       .collection(collectionName)
@@ -66,11 +66,11 @@ export const signinWithOtp = async (p: {
   data: { otpId: string; otp: string };
 }) => {
   try {
-    const authData = await p.pb.collection(collectionName).authWithOTP(p.data.otpId, p.data.otp);
-    console.log(`AuthForm.tsx:${/*LL*/ 184}`, { authData });
+    const data = await p.pb.collection(collectionName).authWithOTP(p.data.otpId, p.data.otp);
 
     return {
       success: true,
+      data,
       messages: ["Successfully signed in with OTP"] as string[],
     } as const;
   } catch (error) {
@@ -84,18 +84,14 @@ export const signinWithOtp = async (p: {
 
 export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
-    const resp = await p.pb.collection(collectionName).authWithOAuth2({
+    const data = await p.pb.collection(collectionName).authWithOAuth2({
       provider: "google",
-      createData: {
-        status: "pending",
-        role: "standard",
-      },
+      createData: { status: "pending", role: "standard" },
     });
-
-    console.log(`dbAuthUtils.ts:${/*LL*/ 49}`, { resp });
 
     return {
       success: true,
+      data,
       messages: ["Successfully signup user with google oauth2"] as string[],
     } as const;
   } catch (error) {
