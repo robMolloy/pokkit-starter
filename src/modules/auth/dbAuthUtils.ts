@@ -167,7 +167,9 @@ export const createUser = async (p: {
       .create({ ...p.data, passwordConfirm: p.data.password });
     return { success: true, data: resp } as const;
   } catch (error) {
-    return { success: false, error } as const;
+    const messagesResp = extractMessageFromPbError({ error });
+    const messages = ["Failed to create user", ...(messagesResp ? messagesResp : [])];
+    return { success: false, error, messages } as const;
   }
 };
 
