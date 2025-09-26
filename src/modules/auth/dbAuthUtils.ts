@@ -15,6 +15,8 @@ type TUserSignUpSeed = Pick<TUser, "email" | "name" | "emailVisibility" | "role"
   passwordConfirm: string;
 };
 
+const collectionName = "users";
+
 export const checkAuth = (p: { pb: PocketBase }) => {
   const authStore = p.pb.authStore;
   if (!authStore?.token) return { success: false, error: "authStore is null" } as const;
@@ -23,7 +25,9 @@ export const checkAuth = (p: { pb: PocketBase }) => {
 
 export const loginWithPassword = async (p: { pb: PocketBase; data: TUserSignInSeed }) => {
   try {
-    const resp = await p.pb.collection("users").authWithPassword(p.data.email, p.data.password);
+    const resp = await p.pb
+      .collection(collectionName)
+      .authWithPassword(p.data.email, p.data.password);
 
     pocketbaseAuthStoreSchema.parse(resp);
 
@@ -36,9 +40,10 @@ export const loginWithPassword = async (p: { pb: PocketBase; data: TUserSignInSe
     return { success: false, error, messages } as const;
   }
 };
+
 export const requestSigninWithOtp = async (p: { pb: PocketBase; email: string }) => {
   try {
-    const resp = await p.pb.collection("users").requestOTP(p.email);
+    const resp = await p.pb.collection(collectionName).requestOTP(p.email);
     const schema = z.object({ otpId: z.string() });
 
     const data = schema.parse(resp);
@@ -61,7 +66,7 @@ export const signinWithOtp = async (p: {
   data: { otpId: string; otp: string };
 }) => {
   try {
-    const authData = await p.pb.collection("users").authWithOTP(p.data.otpId, p.data.otp);
+    const authData = await p.pb.collection(collectionName).authWithOTP(p.data.otpId, p.data.otp);
     console.log(`AuthForm.tsx:${/*LL*/ 184}`, { authData });
 
     return {
@@ -76,9 +81,10 @@ export const signinWithOtp = async (p: {
     return { success: false, error, messages } as const;
   }
 };
+
 export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
-    const resp = await p.pb.collection("users").authWithOAuth2({
+    const resp = await p.pb.collection(collectionName).authWithOAuth2({
       provider: "google",
       createData: {
         status: "pending",
@@ -105,7 +111,7 @@ export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
 };
 export const signinWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
-    const resp = await p.pb.collection("users").authWithOAuth2({
+    const resp = await p.pb.collection(collectionName).authWithOAuth2({
       provider: "google",
     });
 
@@ -129,7 +135,7 @@ export const signinWithOAuth2Google = async (p: { pb: PocketBase }) => {
 
 export const signUpWithPassword = async (p: { pb: PocketBase; data: TUserSignUpSeed }) => {
   try {
-    const createResp = await p.pb.collection("users").create(p.data);
+    const createResp = await p.pb.collection(collectionName).create(p.data);
 
     userSchema.parse(createResp);
 
@@ -157,10 +163,21 @@ export const createUser = async (p: {
 }) => {
   try {
     const resp = await p.pb
-      .collection("users")
+      .collection(collectionName)
       .create({ ...p.data, passwordConfirm: p.data.password });
     return { success: true, data: resp } as const;
   } catch (error) {
     return { success: false, error } as const;
+  }
+};
+
+export const listAuthMethods = async (p: { pb: PocketBase }) => {
+  try {
+    const data = await p.pb.collection(collectionName).listAuthMethods();
+    return { success: true, data } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+    const messages = ["Failed to list auth methods", ...(messagesResp ? messagesResp : [])];
+    return { success: false, error, messages } as const;
   }
 };
