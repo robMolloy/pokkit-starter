@@ -107,14 +107,13 @@ export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
 };
 export const signinWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
-    const resp = await p.pb.collection(collectionName).authWithOAuth2({
+    const data = await p.pb.collection(collectionName).authWithOAuth2({
       provider: "google",
     });
 
-    console.log(`dbAuthUtils.ts:${/*LL*/ 49}`, { resp });
-
     return {
       success: true,
+      data,
       messages: ["Successfully signin user with google oauth2"] as string[],
     } as const;
   } catch (error) {
