@@ -17,8 +17,8 @@ export default function Page() {
     <UnauthenticatedOnlyRoute>
       <CenteredItemTemplate>
         <SimpleCard
-          title="Sign in with OTP"
-          headerChildrenBottom={
+          title="Sign up with OAuth2"
+          headerChildrenTop={
             <Link href="/auth" className="text-muted-foreground hover:underline">
               &lt; Back
             </Link>

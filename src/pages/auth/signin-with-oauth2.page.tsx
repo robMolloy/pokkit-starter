@@ -18,7 +18,7 @@ export default function Page() {
       <CenteredItemTemplate>
         <SimpleCard
           title="Sign in with OTP"
-          headerChildrenBottom={
+          headerChildrenTop={
             <Link href="/auth" className="text-muted-foreground hover:underline">
               &lt; Back
             </Link>
