@@ -61,6 +61,29 @@ export const requestSigninWithOtp = async (p: { pb: PocketBase; email: string })
   }
 };
 
+export const requestPasswordReset = async (p: { pb: PocketBase; email: string }) => {
+  try {
+    const resp = await p.pb.collection(collectionName).requestPasswordReset(p.email);
+    console.log(`dbAuthUtils.ts:${/*LL*/ 67}`, { resp });
+    const schema = z.boolean();
+
+    schema.parse(resp);
+    return {
+      success: true,
+      messages: ["Successfully requested passsword reset"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = [
+      "Failed to request password reset for user",
+      ...(messagesResp ? messagesResp : []),
+    ];
+
+    return { success: false, error, messages } as const;
+  }
+};
+
 export const signinWithOtp = async (p: {
   pb: PocketBase;
   data: { otpId: string; otp: string };

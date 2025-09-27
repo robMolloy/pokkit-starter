@@ -48,7 +48,7 @@ export const AuthNavigationForm = (p: { authMethodsList: AuthMethodsList }) => {
             )}
             <Link
               className="text-sm text-muted-foreground hover:underline"
-              href="/auth/forgot-your-password"
+              href="/auth/request-password-reset"
             >
               Forgot your password?
             </Link>
