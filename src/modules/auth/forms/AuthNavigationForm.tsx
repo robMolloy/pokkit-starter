@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SimpleCard } from "@/components/uiCustom/SimpleCard";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { AuthMethodsList } from "pocketbase";
 
@@ -45,6 +46,12 @@ export const AuthNavigationForm = (p: { authMethodsList: AuthMethodsList }) => {
                 Sign in with email and password
               </Button>
             )}
+            <Link
+              className="text-sm text-muted-foreground hover:underline"
+              href="/auth/forgot-your-password"
+            >
+              Forgot your password?
+            </Link>
           </div>
         </TabsContent>
         <TabsContent value="signup" className="pt-2">
