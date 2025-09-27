@@ -64,10 +64,10 @@ export const requestSigninWithOtp = async (p: { pb: PocketBase; email: string })
 export const requestPasswordReset = async (p: { pb: PocketBase; email: string }) => {
   try {
     const resp = await p.pb.collection(collectionName).requestPasswordReset(p.email);
-    console.log(`dbAuthUtils.ts:${/*LL*/ 67}`, { resp });
-    const schema = z.boolean();
 
+    const schema = z.literal(true);
     schema.parse(resp);
+
     return {
       success: true,
       messages: ["Successfully requested passsword reset"] as string[],
@@ -77,6 +77,34 @@ export const requestPasswordReset = async (p: { pb: PocketBase; email: string })
 
     const messages = [
       "Failed to request password reset for user",
+      ...(messagesResp ? messagesResp : []),
+    ];
+
+    return { success: false, error, messages } as const;
+  }
+};
+
+export const confirmPasswordReset = async (p: {
+  pb: PocketBase;
+  data: { token: string; password: string; passwordConfirm: string };
+}) => {
+  try {
+    const resp = await p.pb
+      .collection(collectionName)
+      .confirmPasswordReset(p.data.token, p.data.password, p.data.passwordConfirm);
+
+    const schema = z.literal(true);
+    schema.parse(resp);
+
+    return {
+      success: true,
+      messages: ["Successfully confirmed passsword reset"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = [
+      "Failed to confirm password reset for user",
       ...(messagesResp ? messagesResp : []),
     ];
 
