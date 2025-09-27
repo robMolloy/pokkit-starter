@@ -61,6 +61,29 @@ export const requestSigninWithOtp = async (p: { pb: PocketBase; email: string })
   }
 };
 
+export const requestVerificationEmail = async (p: { pb: PocketBase; email: string }) => {
+  try {
+    const resp = await p.pb.collection(collectionName).requestVerification(p.email);
+
+    const schema = z.literal(true);
+    schema.parse(resp);
+
+    return {
+      success: true,
+      messages: ["Successfully requested verification email"] as string[],
+    } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const messages = [
+      "Failed to request verification email for user",
+      ...(messagesResp ? messagesResp : []),
+    ];
+
+    return { success: false, error, messages } as const;
+  }
+};
+
 export const requestPasswordReset = async (p: { pb: PocketBase; email: string }) => {
   try {
     const resp = await p.pb.collection(collectionName).requestPasswordReset(p.email);
