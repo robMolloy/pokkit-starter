@@ -26,7 +26,11 @@ export const SimpleCard = (p: {
         </CardHeader>
       )}
       <CardContent>{p.children}</CardContent>
-      {p.footerChildren && <CardFooter>{p.footerChildren}</CardFooter>}
+      {p.footerChildren && (
+        <CardFooter>
+          <div>{p.footerChildren}</div>
+        </CardFooter>
+      )}
     </Card>
   );
 };
