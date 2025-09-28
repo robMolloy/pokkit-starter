@@ -1,9 +1,14 @@
 import { CustomIcon } from "@/components/CustomIcon";
 import { Button } from "@/components/ui/button";
+import {
+  FormFeedbackMessages,
+  useFormFeedbackMessages,
+} from "@/components/uiCustom/FormFeedbackMessages";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { requestVerificationEmail } from "@/modules/auth/dbAuthUtils";
 
 export const AwaitingVerificationScreen = (p: { pb: PocketBase; email: string }) => {
+  const formFeedback = useFormFeedbackMessages();
   return (
     <div className="flex flex-col items-center justify-center px-4 pt-12">
       <div className="w-full max-w-md space-y-6">
@@ -25,8 +30,19 @@ export const AwaitingVerificationScreen = (p: { pb: PocketBase; email: string })
               You should receive an email when you first sign up. Check your spam folder if you
               don't see it or you can request a new one.
             </p>
+            {formFeedback.messages && formFeedback.status && (
+              <FormFeedbackMessages messages={formFeedback.messages} status={formFeedback.status} />
+            )}
             <div>
-              <Button onClick={() => requestVerificationEmail({ pb: p.pb, email: p.email })}>
+              <Button
+                onClick={async () => {
+                  const resp = await requestVerificationEmail({ pb: p.pb, email: p.email });
+                  const showMessagesFn = resp.success
+                    ? formFeedback.showSuccess
+                    : formFeedback.showError;
+                  showMessagesFn(resp.messages);
+                }}
+              >
                 Request Verification Email
               </Button>
             </div>
