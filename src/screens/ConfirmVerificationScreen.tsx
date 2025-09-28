@@ -1,11 +1,14 @@
 import { CustomIcon } from "@/components/CustomIcon";
 import { Button } from "@/components/ui/button";
+import {
+  FormFeedbackMessages,
+  useFormFeedbackMessages,
+} from "@/components/uiCustom/FormFeedbackMessages";
+import { SimpleCard } from "@/components/uiCustom/SimpleCard";
 import { pb } from "@/config/pocketbaseConfig";
 import { confirmVerificationEmail } from "@/modules/auth/dbAuthUtils";
+import { TUser } from "@/modules/users/dbUsersUtils";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { ErrorScreen } from "./ErrorScreen";
-import { LoadingScreen } from "./LoadingScreen";
 
 export const ConfirmVerificationSuccessScreen = () => {
   const router = useRouter();
@@ -30,17 +33,34 @@ export const ConfirmVerificationSuccessScreen = () => {
   );
 };
 
-export const ConfirmVerificationScreen = (p: { token: string }) => {
-  const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
+export const ConfirmVerificationScreen = (p: { user: TUser | null; token: string }) => {
+  const formFeedback = useFormFeedbackMessages();
 
-  useEffect(() => {
-    (async () => {
-      const resp = await confirmVerificationEmail({ pb: pb, token: p.token });
-      setStatus(resp.success ? "success" : "error");
-    })();
-  }, []);
+  const router = useRouter();
 
-  if (status === "loading") return <LoadingScreen />;
-  if (status === "error") return <ErrorScreen />;
-  return <ConfirmVerificationSuccessScreen />;
+  return (
+    <SimpleCard title="Confirm email verification">
+      {formFeedback.status && formFeedback.messages && (
+        <FormFeedbackMessages messages={formFeedback.messages} status={formFeedback.status} />
+      )}
+      {formFeedback.status !== "success" && (
+        <Button
+          className="w-full"
+          onClick={async () => {
+            const resp = await confirmVerificationEmail({ pb: pb, token: p.token });
+
+            const showMessagesFn = resp.success ? formFeedback.showSuccess : formFeedback.showError;
+            showMessagesFn(resp.messages);
+          }}
+        >
+          Click to confirm email verification
+        </Button>
+      )}
+      {formFeedback.status === "success" && (
+        <Button className="w-full" onClick={async () => router.push("/")}>
+          Go Home
+        </Button>
+      )}
+    </SimpleCard>
+  );
 };
