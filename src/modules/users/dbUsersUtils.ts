@@ -56,13 +56,18 @@ export const subscribeToUser = async (p: {
   onChange: (e: TUser | null) => void;
 }) => {
   try {
-    const userResp = await getUser(p);
-    p.onChange(userResp.success ? userResp.data : null);
-
-    const unsub = p.pb.collection("users").subscribe(p.id, (e) => {
+    const unsubPromise = p.pb.collection("users").subscribe(p.id, (e) => {
       const parseResp = userSchema.safeParse(e.record);
       p.onChange(parseResp.success ? parseResp.data : null);
     });
+    const userRespPromise = getUser(p);
+
+    // subscription must be complete to avoid any race conditions issues
+    // avoid using promises.all to be explicit
+    const unsub = await unsubPromise;
+    const userResp = await userRespPromise;
+
+    p.onChange(userResp.success ? userResp.data : null);
 
     return { success: true, data: unsub } as const;
   } catch (error) {
