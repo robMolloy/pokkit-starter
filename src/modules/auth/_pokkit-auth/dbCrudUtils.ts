@@ -1,6 +1,7 @@
 import { pb } from "@/config/pocketbaseConfig";
 import PocketBase, { RecordModel } from "pocketbase";
 import { z } from "zod";
+import { userSchema, usersCollectionName } from "./pokkitAuthUtils";
 
 export const getRecordById = async <T extends { id: string }>(p: {
   pb: PocketBase;
@@ -139,25 +140,14 @@ export const smartSubscribeToRecordById = async <T extends { id: string }>(p: {
 };
 
 (async () => {
-  const userSchema = z.object({
-    collectionId: z.string(),
-    collectionName: z.literal("users"),
-    id: z.string(),
-    email: z.string(),
-    name: z.string(),
-    emailVisibility: z.boolean(),
-    verified: z.boolean(),
-    created: z.string(),
-    updated: z.string(),
-  });
   const getUserById = (p: { pb: PocketBase; id: string }) => {
     return getRecordById({
       pb: p.pb,
       id: p.id,
-      collectionName: "users",
+      collectionName: usersCollectionName,
       schema: userSchema,
-      successMessage: "User fetched successfully",
-      failMessage: "Error fetching user",
+      successMessage: "Successfully fetched user",
+      failMessage: "Failed to fetch user",
     });
   };
   const userResp = await getUserById({ pb, id: "600d6c3c-c0c7-4b0a-a0f0-b1e8f9a9b9c9" });
