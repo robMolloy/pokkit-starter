@@ -7,7 +7,7 @@ import {
 } from "@/components/uiCustom/FormFeedbackMessages";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { confirmPasswordReset, signinWithPassword } from "../dbAuthUtils";
+import { confirmPasswordReset, signinWithPassword } from "../_pokkit-auth/dbPokkitAuthUtils";
 
 export const ConfirmPasswordResetForm = (p: {
   pb: PocketBase;

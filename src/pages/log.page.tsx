@@ -1,15 +1,20 @@
+import { useCurrentUserStore } from "@/modules/auth/currentUserStore/currentUserStore";
+import { useReactivePocketBaseAuthStore } from "@/modules/auth/reactivePocketBaseAuthStore/reactivePocketBaseAuthStore";
 import { useUsersStore } from "@/modules/users/usersStore";
-import { useCurrentUserStore, useUnverifiedIsLoggedInStore } from "@/modules/auth/authDataStore";
 
 const LogPage = () => {
   const usersStore = useUsersStore();
   const currentUserStore = useCurrentUserStore();
-  const unverifiedIsLoggedInStore = useUnverifiedIsLoggedInStore();
+  const reactivePocketBaseAuthStore = useReactivePocketBaseAuthStore();
 
   return (
     <div>
       <pre>
-        {JSON.stringify({ usersStore, currentUserStore, unverifiedIsLoggedInStore }, undefined, 2)}
+        {JSON.stringify(
+          { usersStore, currentUserStore, reactivePocketBaseAuthStore },
+          undefined,
+          2,
+        )}
       </pre>
     </div>
   );

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { TUser } from "./dbUsersUtils";
+import { TUser } from "../auth/_pokkit-auth/pokkitAuthUtils";
 
 type TState = TUser[];
 

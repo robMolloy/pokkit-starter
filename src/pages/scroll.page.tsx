@@ -1,10 +1,10 @@
 import { MainFixedLayout, Scroll } from "@/components/layout/LayoutTemplate";
 import { H1 } from "@/components/ui/defaultComponents";
-import { ApprovedUserOnlyRoute } from "@/modules/auth/routeProtectors/ApprovedUserOnlyRoute";
+import { AuthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/AuthenticatedOnlyRoute";
 
 export default function Page() {
   return (
-    <ApprovedUserOnlyRoute>
+    <AuthenticatedOnlyRoute>
       <MainFixedLayout>
         <H1>Scrolling page with fixed header</H1>
         <Scroll>
@@ -14,6 +14,6 @@ export default function Page() {
         </Scroll>
         <H1>Scrolling page with fixed footer</H1>
       </MainFixedLayout>
-    </ApprovedUserOnlyRoute>
+    </AuthenticatedOnlyRoute>
   );
 }

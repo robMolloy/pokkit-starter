@@ -3,7 +3,7 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { signinWithPassword, signUpWithPassword } from "../dbAuthUtils";
+import { signinWithPassword, signUpWithPassword } from "../_pokkit-auth/dbPokkitAuthUtils";
 import {
   FormFeedbackMessages,
   useFormFeedbackMessages,
@@ -42,8 +42,6 @@ export const SignupWithEmailAndPasswordForm = (p: {
         data: {
           name,
           email,
-          status: "pending",
-          role: "standard",
           emailVisibility: true,
           password,
           passwordConfirm,

@@ -1,6 +1,6 @@
 import { CenteredItemTemplate } from "@/components/layout/CenteredItemTemplate";
 import { pb } from "@/config/pocketbaseConfig";
-import { listAuthMethods } from "@/modules/auth/dbAuthUtils";
+import { listAuthMethods } from "@/modules/auth/_pokkit-auth/dbPokkitAuthUtils";
 import { AuthNavigationForm } from "@/modules/auth/forms/AuthNavigationForm";
 import { UnauthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/UnauthenticatedOnlyRoute";
 import { ErrorScreen } from "@/screens/ErrorScreen";

@@ -3,7 +3,7 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { pb, PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { requestSigninWithOtp, signinWithOtp } from "../dbAuthUtils";
+import { requestSigninWithOtp, signinWithOtp } from "../_pokkit-auth/dbPokkitAuthUtils";
 import {
   FormFeedbackMessages,
   useFormFeedbackMessages,

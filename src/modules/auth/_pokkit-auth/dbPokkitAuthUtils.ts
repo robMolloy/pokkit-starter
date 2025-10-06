@@ -180,7 +180,6 @@ export const signupWithOAuth2Google = async (p: { pb: PocketBase }) => {
   try {
     const data = await p.pb.collection(usersCollectionName).authWithOAuth2({
       provider: "google",
-      createData: { status: "pending", role: "standard" },
     });
 
     return {

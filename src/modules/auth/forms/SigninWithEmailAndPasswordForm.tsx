@@ -3,11 +3,11 @@ import { TextInput } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { signinWithPassword } from "../dbAuthUtils";
 import {
   FormFeedbackMessages,
   useFormFeedbackMessages,
 } from "@/components/uiCustom/FormFeedbackMessages";
+import { signinWithPassword } from "../_pokkit-auth/dbPokkitAuthUtils";
 
 export const SigninWithEmailAndPasswordForm = (p: {
   pb: PocketBase;

@@ -7,9 +7,9 @@ import {
 } from "@/components/uiCustom/FormFeedbackMessages";
 import { PocketBase } from "@/config/pocketbaseConfig";
 import { useState } from "react";
-import { requestPasswordReset } from "../dbAuthUtils";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { requestPasswordReset } from "../_pokkit-auth/dbPokkitAuthUtils";
 
 export const RequestPasswordResetForm = (p: { pb: PocketBase }) => {
   const router = useRouter();

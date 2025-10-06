@@ -6,7 +6,7 @@ import {
 } from "@/components/uiCustom/FormFeedbackMessages";
 import { SimpleCard } from "@/components/uiCustom/SimpleCard";
 import { pb } from "@/config/pocketbaseConfig";
-import { signupWithOAuth2Google } from "@/modules/auth/dbAuthUtils";
+import { signupWithOAuth2Google } from "@/modules/auth/_pokkit-auth/dbPokkitAuthUtils";
 import { UnauthenticatedOnlyRoute } from "@/modules/auth/routeProtectors/UnauthenticatedOnlyRoute";
 import Link from "next/link";
 

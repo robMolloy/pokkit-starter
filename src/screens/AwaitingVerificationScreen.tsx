@@ -5,7 +5,7 @@ import {
   useFormFeedbackMessages,
 } from "@/components/uiCustom/FormFeedbackMessages";
 import { PocketBase } from "@/config/pocketbaseConfig";
-import { requestVerificationEmail } from "@/modules/auth/dbAuthUtils";
+import { requestVerificationEmail } from "@/modules/auth/_pokkit-auth/dbPokkitAuthUtils";
 
 export const AwaitingVerificationScreen = (p: { pb: PocketBase; email: string }) => {
   const formFeedback = useFormFeedbackMessages();

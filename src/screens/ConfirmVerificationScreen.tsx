@@ -6,8 +6,8 @@ import {
 } from "@/components/uiCustom/FormFeedbackMessages";
 import { SimpleCard } from "@/components/uiCustom/SimpleCard";
 import { pb } from "@/config/pocketbaseConfig";
-import { confirmVerificationEmail } from "@/modules/auth/dbAuthUtils";
-import { TUser } from "@/modules/users/dbUsersUtils";
+import { confirmVerificationEmail } from "@/modules/auth/_pokkit-auth/dbPokkitAuthUtils";
+import { TUser } from "@/modules/auth/_pokkit-auth/pokkitAuthUtils";
 import { useRouter } from "next/router";
 
 export const ConfirmVerificationSuccessScreen = () => {
