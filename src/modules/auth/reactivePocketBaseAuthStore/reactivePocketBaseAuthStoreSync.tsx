@@ -27,8 +27,8 @@ export const useReactivePocketBaseAuthStoreSync = (p: {
   }, []);
 
   useEffect(() => {
-    if (reactiveBaseAuthStore.data === undefined) return p.onIsLoading();
-    if (reactiveBaseAuthStore.data === null) return p.onIsLoggedOut();
-    return p.onIsLoggedIn(reactiveBaseAuthStore.data);
+    if (reactiveBaseAuthStore.data === undefined) p.onIsLoading();
+    if (reactiveBaseAuthStore.data === null) p.onIsLoggedOut();
+    if (!!reactiveBaseAuthStore.data) p.onIsLoggedIn(reactiveBaseAuthStore.data);
   }, [reactiveBaseAuthStore.data]);
 };

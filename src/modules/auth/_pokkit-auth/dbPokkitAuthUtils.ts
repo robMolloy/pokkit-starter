@@ -83,7 +83,7 @@ export const requestVerificationEmail = async (p: { pb: PocketBase; email: strin
 export const confirmVerificationEmail = async (p: { pb: PocketBase; token: string }) => {
   try {
     const resp = await p.pb.collection(usersCollectionName).confirmVerification(p.token);
-    console.log(`dbAuthUtils.ts:${/*LL*/ 89}`, { resp });
+    console.log(`dbAuthUtils.ts:${/*LL*/ 86}`, { resp });
 
     const schema = z.literal(true);
     schema.parse(resp);
@@ -240,9 +240,18 @@ export const signUpWithPassword = async (p: { pb: PocketBase; data: TUserSignUpS
 };
 
 export const logout = (p: { pb: PocketBase }) => {
-  p.pb.realtime.unsubscribe();
-  p.pb.authStore.clear();
-  return { success: true } as const;
+  try {
+    p.pb.realtime.unsubscribe();
+    p.pb.authStore.clear();
+    const messages = ["Successfully logged out user"];
+    return { success: true, messages } as const;
+  } catch (error) {
+    const messagesResp = extractMessageFromPbError({ error });
+
+    const title = "Failed to sign up user";
+    const messages = [title, ...(messagesResp ? messagesResp : [])];
+    return { success: false, error, messages } as const;
+  }
 };
 
 export const createUser = async (p: {
